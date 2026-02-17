@@ -1,17 +1,19 @@
 # Assets visuais do README
 
-Coloque aqui os arquivos usados na seção **Visual do app** do `README.md`:
+Arquivos atuais usados na seção **Visual do app** do `README.md`:
 
-- `ux-flow.gif`
-- `clientes.png`
-- `simulacao.png`
-- `investimentos.png`
-- `dashboard.png`
+- `ux-flow.svg`
+- `clientes.svg`
+- `simulacao.svg`
+- `investimentos.svg`
+- `dashboard.svg`
+
+Você pode substituir por arquivos reais (GIF/PNG) e atualizar os caminhos no `README.md`.
 
 ## Padrão recomendado
 
 - Resolução: 1366x768 ou 1440x900
-- GIF: 12–20 segundos, 10–15 fps
+- GIF (opcional): 12–20 segundos, 10–15 fps
 - Tamanho do GIF: idealmente abaixo de 12 MB
 
 ## Sugestão rápida para criar o GIF

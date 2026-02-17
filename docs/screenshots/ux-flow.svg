@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="540" viewBox="0 0 1200 540" role="img" aria-label="Fluxo do app MultiplicaMoney">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#120c24"/>
+      <stop offset="100%" stop-color="#1a1330"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="540" fill="url(#bg)"/>
+  <text x="600" y="70" fill="#f5f3ff" font-size="34" text-anchor="middle" font-family="Segoe UI, Arial">MultiplicaMoney • Fluxo de Usabilidade</text>
+  <g fill="#c4b5fd" font-size="22" font-family="Segoe UI, Arial" text-anchor="middle">
+    <rect x="80" y="180" width="220" height="90" rx="14" fill="#2a1f47"/>
+    <text x="190" y="235">Cadastro</text>
+    <rect x="350" y="180" width="220" height="90" rx="14" fill="#2a1f47"/>
+    <text x="460" y="235">Simulação</text>
+    <rect x="620" y="180" width="220" height="90" rx="14" fill="#2a1f47"/>
+    <text x="730" y="235">Formalização</text>
+    <rect x="890" y="180" width="220" height="90" rx="14" fill="#2a1f47"/>
+    <text x="1000" y="235">Overview</text>
+  </g>
+  <g stroke="#a855f7" stroke-width="4" fill="none">
+    <path d="M300 225 H350"/><path d="M570 225 H620"/><path d="M840 225 H890"/>
+  </g>
+  <text x="600" y="470" fill="#22d3ee" font-size="22" text-anchor="middle" font-family="Segoe UI, Arial">Substitua este placeholder por um GIF real em docs/screenshots/ux-flow.gif se desejar</text>
+</svg>

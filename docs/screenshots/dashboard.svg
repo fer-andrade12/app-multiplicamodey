@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Placeholder tela dashboard">
+  <rect width="960" height="540" fill="#1a1330"/>
+  <text x="480" y="120" fill="#f5f3ff" font-size="40" text-anchor="middle" font-family="Segoe UI, Arial">Dashboard Completo</text>
+  <text x="480" y="290" fill="#c4b5fd" font-size="24" text-anchor="middle" font-family="Segoe UI, Arial">Adicione aqui um print real: docs/screenshots/dashboard.png</text>
+</svg>

@@ -36,7 +36,7 @@ docker compose up -d --build
 ## Visual do app
 
 <p align="center">
-	<img src="docs/screenshots/ux-flow.gif" alt="Demonstração de usabilidade do MultiplicaMoney" width="980" />
+	<img src="docs/screenshots/ux-flow.svg" alt="Demonstração de usabilidade do MultiplicaMoney" width="980" />
 	<br />
 	<sub>Fluxo completo: cadastro → simulação → formalização → investimento overview → dashboard.</sub>
 </p>
@@ -44,24 +44,24 @@ docker compose up -d --build
 <table>
 	<tr>
 		<td align="center">
-			<img src="docs/screenshots/clientes.png" alt="Tela de clientes" width="480" />
+			<img src="docs/screenshots/clientes.svg" alt="Tela de clientes" width="480" />
 			<br />
 			<sub>Clientes</sub>
 		</td>
 		<td align="center">
-			<img src="docs/screenshots/simulacao.png" alt="Tela de simulação" width="480" />
+			<img src="docs/screenshots/simulacao.svg" alt="Tela de simulação" width="480" />
 			<br />
 			<sub>Simulação</sub>
 		</td>
 	</tr>
 	<tr>
 		<td align="center">
-			<img src="docs/screenshots/investimentos.png" alt="Tela de investimentos" width="480" />
+			<img src="docs/screenshots/investimentos.svg" alt="Tela de investimentos" width="480" />
 			<br />
 			<sub>Investimentos</sub>
 		</td>
 		<td align="center">
-			<img src="docs/screenshots/dashboard.png" alt="Tela de dashboard completo" width="480" />
+			<img src="docs/screenshots/dashboard.svg" alt="Tela de dashboard completo" width="480" />
 			<br />
 			<sub>Dashboard Completo</sub>
 		</td>
