@@ -124,6 +124,10 @@
 
     .tab.active { display: block; }
 
+    body.dashboard-focus #kpi-grid {
+      display: none;
+    }
+
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -131,6 +135,29 @@
     }
 
     label { font-size: 12px; color: var(--muted); }
+
+    .label-help {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .help-icon-btn {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid rgba(168, 85, 247, 0.45);
+      background: rgba(124,58,237,0.15);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 11px;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+    }
 
     input, select {
       width: 100%;
@@ -319,6 +346,108 @@
       animation: fadeIn 0.2s ease-out;
     }
 
+    .dashboard-fullscreen-card {
+      max-width: 1200px;
+      min-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dashboard-fullscreen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-fullscreen-header h3 {
+      margin: 0;
+      color: #f5f3ff;
+      font-size: 22px;
+    }
+
+    .dashboard-charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .pizza-chart {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: radial-gradient(circle at center, rgba(17, 24, 39, 0.22) 0 54%, transparent 55% 100%);
+      margin: 8px auto;
+    }
+
+    .pizza-legend {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pizza-legend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.1);
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+      align-items: end;
+      gap: 10px;
+      min-height: 240px;
+      margin-top: 8px;
+    }
+
+    .bar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 44px;
+      border-radius: 12px 12px 6px 6px;
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      border: 1px solid rgba(168,85,247,0.5);
+      min-height: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    }
+
+    .bar-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .dialog-title {
       margin: 0;
       color: #f5f3ff;
@@ -485,7 +614,7 @@
     <div class="badge">API ativa em 8080</div>
   </header>
 
-  <div class="grid">
+  <div id="kpi-grid" class="grid">
     <div class="card">
       <h2>Total investido</h2>
       <div id="kpi-investido" class="metric">R$ 0,00</div>
@@ -563,10 +692,9 @@
     <h2>Clientes cadastrados</h2>
     <div class="row">
       <button id="btn-ir-cadastro-cliente" class="primary">Cadastrar cliente</button>
-      <button id="btn-recarregar" class="primary">Carregar lista</button>
       <input id="c-busca" type="text" placeholder="Buscar cliente por nome, CPF ou email" style="max-width: 420px;" />
     </div>
-    <div id="msg-clientes" class="notice">Clique em "Carregar lista" para exibir clientes.</div>
+    <div id="msg-clientes" class="notice">A lista de clientes e carregada automaticamente.</div>
     <div id="lista-clientes" class="list"></div>
   </section>
 
@@ -638,8 +766,13 @@
         <input id="s-busca-cliente" type="text" placeholder="Digite CPF ou nome" />
       </div>
       <div>
-        <label>Cliente</label>
-        <select id="s-cliente"></select>
+        <label>Nome do cliente</label>
+        <input id="s-cliente-nome" type="text" placeholder="Cliente sera preenchido pela busca" readonly />
+      </div>
+      <div>
+        <label>Renda mensal</label>
+        <input id="s-cliente-renda" type="text" placeholder="Renda sera preenchida pela busca" readonly />
+        <input id="s-cliente-id" type="hidden" />
       </div>
       <div>
         <label>Valor principal</label>
@@ -654,7 +787,9 @@
         <input id="s-parcelas" type="number" step="1" placeholder="12" />
       </div>
       <div>
-        <label>Tipo juros</label>
+        <label class="label-help">Tipo juros
+          <button id="btn-ajuda-tipo-imposto" class="help-icon-btn" type="button" aria-label="Ajuda sobre tipo de imposto">?</button>
+        </label>
         <select id="s-tipo">
           <option value="COMPOSTO">COMPOSTO</option>
           <option value="SIMPLES">SIMPLES</option>
@@ -722,6 +857,53 @@
     <div id="lista-dashboard-clientes-mes" class="list"></div>
   </section>
 
+  <div id="dashboard-completo-fullscreen" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dashboard-completo-title">
+    <div class="dialog-card dashboard-fullscreen-card">
+      <div class="dashboard-fullscreen-header">
+        <h3 id="dashboard-completo-title">Dashboard completo</h3>
+        <button id="btn-fechar-dashboard-fullscreen" class="ghost" type="button">Fechar</button>
+      </div>
+
+      <div class="card">
+        <h2>Resumo executivo</h2>
+        <div class="grid" style="margin-top: 10px; margin-bottom: 0;">
+          <div class="card">
+            <h2>Total investido</h2>
+            <div id="fs-kpi-investido" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Total em aberto</h2>
+            <div id="fs-kpi-aberto" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Total vencido</h2>
+            <div id="fs-kpi-vencido" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Lucro real</h2>
+            <div id="fs-kpi-lucro" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Clientes em atraso</h2>
+            <div id="fs-kpi-clientes-atraso" class="metric">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-charts-grid">
+        <div class="card">
+          <h2>Distribuicao financeira (pizza)</h2>
+          <div id="chart-dashboard-pizza" class="pizza-chart"></div>
+          <div id="chart-dashboard-pizza-legenda" class="pizza-legend"></div>
+        </div>
+        <div class="card">
+          <h2>Volume de clientes por mes (colunas)</h2>
+          <div id="chart-dashboard-colunas" class="bar-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <section id="tab-investimento-overview" class="tab card">
     <h2>Investimento overview</h2>
     <div class="action-panel">
@@ -783,6 +965,23 @@
       <div class="dialog-actions">
         <button id="btn-cancelar-formalizacao" class="ghost" type="button">Cancelar</button>
         <button id="btn-confirmar-formalizacao" class="primary" type="button">Confirmar formalizacao</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="tipo-imposto-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="tipo-imposto-dialog-title">
+    <div class="dialog-card">
+      <h3 id="tipo-imposto-dialog-title" class="dialog-title">Tipo de imposto e juros</h3>
+      <p class="dialog-body">
+        Use esta referencia para escolher o tipo da simulacao:
+      </p>
+      <div class="dialog-summary">
+        <div><strong>COMPOSTO</strong>: juros calculados sobre o saldo acumulado, resultando em crescimento maior ao longo das parcelas.</div>
+        <div><strong>SIMPLES</strong>: juros calculados apenas sobre o principal, com crescimento linear.</div>
+        <div>Escolha o tipo conforme a regra do contrato. A selecao impacta valor total e valor das parcelas.</div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-fechar-ajuda-tipo-imposto" class="primary" type="button">Entendi</button>
       </div>
     </div>
   </div>
@@ -904,6 +1103,7 @@
     let enderecoExclusaoPendente = null;
     let termoBuscaSimulacao = '';
     let ultimaSimulacao = null;
+    let clienteSimulacaoSelecionado = null;
     let investimentosCache = [];
     let termoBuscaInvestimentos = '';
     let investimentoSelecionado = null;
@@ -926,11 +1126,17 @@
     };
 
     function abrirTab(nomeTab) {
+      document.body.classList.toggle('dashboard-focus', nomeTab === 'dashboard-completo');
+
       tabButtons.forEach((b) => b.classList.toggle('active', b.dataset.tab === nomeTab));
       Object.entries(tabs).forEach(([key, value]) => {
         if (!value) return;
         value.classList.toggle('active', key === nomeTab);
       });
+
+      if (nomeTab !== 'dashboard-completo') {
+        fecharDashboardFullscreen();
+      }
 
       if (nomeTab === 'clientes-lista') {
         carregarClientes();
@@ -987,10 +1193,24 @@
     const taxaInput = document.getElementById('s-taxa');
     const buscaClientesInput = document.getElementById('c-busca');
     const buscaClienteSimulacaoInput = document.getElementById('s-busca-cliente');
+    const btnAjudaTipoImposto = document.getElementById('btn-ajuda-tipo-imposto');
+    const clienteSimulacaoNomeInput = document.getElementById('s-cliente-nome');
+    const clienteSimulacaoRendaInput = document.getElementById('s-cliente-renda');
+    const clienteSimulacaoIdInput = document.getElementById('s-cliente-id');
     const buscaInvestimentosInput = document.getElementById('i-busca');
     const btnCarregarDashboardCompleto = document.getElementById('btn-carregar-dashboard-completo');
     const msgDashboardCompleto = document.getElementById('msg-dashboard-completo');
     const listaDashboardClientesMes = document.getElementById('lista-dashboard-clientes-mes');
+    const dialogDashboardCompleto = document.getElementById('dashboard-completo-fullscreen');
+    const btnFecharDashboardFullscreen = document.getElementById('btn-fechar-dashboard-fullscreen');
+    const chartDashboardPizza = document.getElementById('chart-dashboard-pizza');
+    const chartDashboardPizzaLegenda = document.getElementById('chart-dashboard-pizza-legenda');
+    const chartDashboardColunas = document.getElementById('chart-dashboard-colunas');
+    const fsKpiInvestido = document.getElementById('fs-kpi-investido');
+    const fsKpiAberto = document.getElementById('fs-kpi-aberto');
+    const fsKpiVencido = document.getElementById('fs-kpi-vencido');
+    const fsKpiLucro = document.getElementById('fs-kpi-lucro');
+    const fsKpiClientesAtraso = document.getElementById('fs-kpi-clientes-atraso');
     const detalhesInvestimento = document.getElementById('detalhes-investimento');
     const detalhesParcelaOverview = document.getElementById('detalhes-parcela-overview');
     const msgParcelaOverview = document.getElementById('msg-parcela-overview');
@@ -1006,6 +1226,8 @@
     const dialog = document.getElementById('formalizacao-dialog');
     const btnCancelarFormalizacao = document.getElementById('btn-cancelar-formalizacao');
     const btnConfirmarFormalizacao = document.getElementById('btn-confirmar-formalizacao');
+    const dialogTipoImposto = document.getElementById('tipo-imposto-dialog');
+    const btnFecharAjudaTipoImposto = document.getElementById('btn-fechar-ajuda-tipo-imposto');
     const dialogCliente = document.getElementById('dialog-cliente');
     const dialogPrincipal = document.getElementById('dialog-principal');
     const dialogTaxa = document.getElementById('dialog-taxa');
@@ -1466,21 +1688,6 @@
           });
 
           listaParcelasAbertas.appendChild(item);
-
-      function limparEstadoSimulacao({ mensagem = 'Sem simulacao.', limparCampos = false } = {}) {
-        ultimaSimulacao = null;
-        document.getElementById('btn-formalizar').disabled = true;
-
-        if (limparCampos) {
-          principalInput.value = '';
-          taxaInput.value = '';
-          document.getElementById('s-parcelas').value = '';
-          document.getElementById('s-tipo').value = 'COMPOSTO';
-        }
-
-        renderParcelasSimulacao([]);
-        document.getElementById('msg-simulacao').textContent = mensagem;
-      }
         });
       }
 
@@ -1510,6 +1717,36 @@
         parcelaOverviewSelecionada = atualizada || null;
       }
       atualizarOverviewParcela();
+    }
+
+    function limparEstadoSimulacao({ mensagem = 'Sem simulacao.', limparCampos = false } = {}) {
+      ultimaSimulacao = null;
+      document.getElementById('btn-formalizar').disabled = true;
+
+      if (limparCampos) {
+        termoBuscaSimulacao = '';
+        clienteSimulacaoSelecionado = null;
+        if (buscaClienteSimulacaoInput) {
+          buscaClienteSimulacaoInput.value = '';
+        }
+        if (clienteSimulacaoNomeInput) {
+          clienteSimulacaoNomeInput.value = '';
+        }
+        if (clienteSimulacaoRendaInput) {
+          clienteSimulacaoRendaInput.value = '';
+        }
+        if (clienteSimulacaoIdInput) {
+          clienteSimulacaoIdInput.value = '';
+        }
+
+        principalInput.value = '';
+        taxaInput.value = '';
+        document.getElementById('s-parcelas').value = '';
+        document.getElementById('s-tipo').value = 'COMPOSTO';
+      }
+
+      renderParcelasSimulacao([]);
+      document.getElementById('msg-simulacao').textContent = mensagem;
     }
 
     async function carregarParcelasInvestimento(investimentoId) {
@@ -1661,6 +1898,18 @@
     function closeFormalizacaoDialog() {
       dialog.classList.add('hidden');
       dialog.setAttribute('aria-hidden', 'true');
+    }
+
+    function openTipoImpostoDialog() {
+      if (!dialogTipoImposto) return;
+      dialogTipoImposto.classList.remove('hidden');
+      dialogTipoImposto.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeTipoImpostoDialog() {
+      if (!dialogTipoImposto) return;
+      dialogTipoImposto.classList.add('hidden');
+      dialogTipoImposto.setAttribute('aria-hidden', 'true');
     }
 
     function closeExcluirClienteDialog() {
@@ -1966,20 +2215,72 @@
             ...ultimaSimulacao.payload,
           }),
         });
-        const novoInvestimentoId = Number(result?.investimento?.id);
+
+        const novoInvestimentoIdResposta = Number(
+          result?.investimento?.id
+          ?? result?.id
+          ?? result?.codigoInvestimento
+          ?? result?.investimento_id
+        );
+
         closeFormalizacaoDialog();
         limparEstadoSimulacao({
-          mensagem: `Contrato formalizado. Investimento ${result.investimento.id}`,
+          mensagem: `Contrato formalizado com sucesso.`,
           limparCampos: true,
         });
-        await carregarDashboard();
 
-        if (Number.isFinite(novoInvestimentoId) && novoInvestimentoId > 0) {
-          termoBuscaInvestimentos = String(novoInvestimentoId);
-          buscaInvestimentosInput.value = termoBuscaInvestimentos;
+        let investimentoIdAlvo = Number.isFinite(novoInvestimentoIdResposta) && novoInvestimentoIdResposta > 0
+          ? novoInvestimentoIdResposta
+          : null;
+
+        try {
+          await carregarDashboard();
+        } catch (_errDashboard) {
+          // sem bloqueio de navegacao
+        }
+
+        try {
           await carregarInvestimentosTodos();
-          selecionarInvestimento(novoInvestimentoId, true);
-          msgInvestimentos.textContent = `Investimento ${novoInvestimentoId} formalizado e aberto no overview.`;
+        } catch (_errInvestimentos) {
+          // sem bloqueio de navegacao
+        }
+
+        if (!investimentoIdAlvo) {
+          investimentoIdAlvo = Number(investimentosCache?.[0]?.id || 0) || null;
+        }
+
+        if (investimentoIdAlvo) {
+          abrirTab('investimento-overview');
+          termoBuscaInvestimentos = String(investimentoIdAlvo);
+          buscaInvestimentosInput.value = termoBuscaInvestimentos;
+
+          try {
+            await carregarInvestimentosTodos();
+          } catch (_errReload) {
+            // sem bloqueio de navegacao
+          }
+
+          try {
+            await selecionarInvestimento(investimentoIdAlvo, true);
+          } catch (_errSelecao) {
+            // mantem overview aberto mesmo se falhar selecao automatica
+          }
+
+          if (!investimentoSelecionado && Array.isArray(investimentosCache) && investimentosCache.length) {
+            try {
+              await selecionarInvestimento(investimentosCache[0].id, true);
+              investimentoIdAlvo = Number(investimentosCache[0].id);
+            } catch (_errSelecaoFallback) {
+              // sem bloqueio de navegacao
+            }
+          }
+
+          abrirTab('investimento-overview');
+          msgInvestimentos.textContent = `Investimento ${investimentoIdAlvo} formalizado e aberto no overview.`;
+        } else {
+          abrirTab('investimento-overview');
+          detalhesInvestimento.textContent = 'Contrato formalizado, mas nao foi possivel identificar automaticamente o investimento criado. Abra a aba Investimentos e selecione o registro mais recente.';
+          msgInvestimentos.textContent = 'Contrato formalizado com sucesso.';
         }
       } catch (err) {
         document.getElementById('msg-simulacao').textContent = err.error || 'Falha ao formalizar.';
@@ -2037,6 +2338,83 @@
       });
     }
 
+    function abrirDashboardFullscreen() {
+      if (!dialogDashboardCompleto) return;
+      dialogDashboardCompleto.classList.remove('hidden');
+      dialogDashboardCompleto.setAttribute('aria-hidden', 'false');
+    }
+
+    function fecharDashboardFullscreen() {
+      if (!dialogDashboardCompleto) return;
+      dialogDashboardCompleto.classList.add('hidden');
+      dialogDashboardCompleto.setAttribute('aria-hidden', 'true');
+    }
+
+    function renderizarGraficosDashboardCompleto(data = {}) {
+      if (!chartDashboardPizza || !chartDashboardPizzaLegenda || !chartDashboardColunas) return;
+
+      const fatias = [
+        { label: 'Lucro recebido', valor: Number(data.lucro_recebido || 0), cor: '#22d3ee' },
+        { label: 'Lucro a receber', valor: Number(data.lucro_a_receber || 0), cor: '#a855f7' },
+        { label: 'Total vencido', valor: Number(data.total_vencido || 0), cor: '#f97316' }
+      ];
+
+      const somaPizza = fatias.reduce((acc, item) => acc + Math.max(0, item.valor), 0);
+      if (somaPizza > 0) {
+        let acumulado = 0;
+        const stops = fatias
+          .map((item) => {
+            const inicio = acumulado;
+            acumulado += (Math.max(0, item.valor) / somaPizza) * 100;
+            return `${item.cor} ${inicio}% ${acumulado}%`;
+          })
+          .join(', ');
+        chartDashboardPizza.style.background = `conic-gradient(${stops})`;
+      } else {
+        chartDashboardPizza.style.background = 'radial-gradient(circle at center, rgba(17, 24, 39, 0.22) 0 54%, transparent 55% 100%)';
+      }
+
+      chartDashboardPizzaLegenda.innerHTML = '';
+      fatias.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'pizza-legend-item';
+        row.innerHTML = `
+          <span class="legend-left"><span class="legend-dot" style="background:${item.cor}"></span>${item.label}</span>
+          <strong>${formatMoney(item.valor)}</strong>
+        `;
+        chartDashboardPizzaLegenda.appendChild(row);
+      });
+
+      const volume = Array.isArray(data.volume_clientes_mes) ? data.volume_clientes_mes : [];
+      chartDashboardColunas.innerHTML = '';
+      if (!volume.length) {
+        chartDashboardColunas.innerHTML = '<div class="notice">Sem dados para grafico de colunas.</div>';
+        return;
+      }
+
+      const maximo = Math.max(...volume.map((item) => Number(item.quantidade || 0)), 1);
+      volume.forEach((item) => {
+        const quantidade = Number(item.quantidade || 0);
+        const altura = Math.max(10, (quantidade / maximo) * 180);
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bar-wrap';
+        wrap.innerHTML = `
+          <div class="bar" style="height:${altura}px" title="${formatReferenciaMes(item.referencia)}: ${quantidade} clientes"></div>
+          <div class="bar-label">${formatReferenciaMes(item.referencia)}<br><strong>${quantidade}</strong></div>
+        `;
+        chartDashboardColunas.appendChild(wrap);
+      });
+    }
+
+    function preencherResumoFullscreen() {
+      if (fsKpiInvestido) fsKpiInvestido.textContent = document.getElementById('kpi-investido')?.textContent || 'R$ 0,00';
+      if (fsKpiAberto) fsKpiAberto.textContent = document.getElementById('kpi-aberto')?.textContent || 'R$ 0,00';
+      if (fsKpiVencido) fsKpiVencido.textContent = document.getElementById('kpi-vencido')?.textContent || 'R$ 0,00';
+      if (fsKpiLucro) fsKpiLucro.textContent = document.getElementById('kpi-lucro')?.textContent || 'R$ 0,00';
+      if (fsKpiClientesAtraso) fsKpiClientesAtraso.textContent = document.getElementById('kpi-clientes-atraso')?.textContent || '0';
+    }
+
     async function carregarDashboardCompleto() {
       if (!msgDashboardCompleto) return;
 
@@ -2048,6 +2426,8 @@
 
         const dashboardCompleto = await fetchJson(`${API}/dashboard/completo`);
         preencherDashboardCompleto(dashboardCompleto);
+        renderizarGraficosDashboardCompleto(dashboardCompleto);
+        preencherResumoFullscreen();
         msgDashboardCompleto.textContent = 'Dashboard completo atualizado com sucesso.';
       } catch (err) {
         msgDashboardCompleto.textContent = err.error || 'Falha ao carregar dashboard completo.';
@@ -2058,36 +2438,63 @@
       }
     }
 
-    function preencherSelects(clientesLista = clientes) {
-      const selects = [document.getElementById('s-cliente')];
-      selects.forEach((sel) => {
-        if (!sel) return;
-        sel.innerHTML = '';
-        clientesLista.forEach((c) => {
-          const opt = document.createElement('option');
-          opt.value = c.id;
-          opt.textContent = `${c.id} - ${c.nome} (renda ${formatMoney(c.renda_mensal)})`;
-          sel.appendChild(opt);
-        });
+    function limparClienteSimulacaoSelecionado() {
+      clienteSimulacaoSelecionado = null;
+      if (clienteSimulacaoIdInput) clienteSimulacaoIdInput.value = '';
+      if (clienteSimulacaoNomeInput) clienteSimulacaoNomeInput.value = '';
+      if (clienteSimulacaoRendaInput) clienteSimulacaoRendaInput.value = '';
+    }
 
-        if (!clientesLista.length) {
-          const opt = document.createElement('option');
-          opt.value = '';
-          opt.textContent = 'Nenhum cliente encontrado';
-          opt.disabled = true;
-          opt.selected = true;
-          sel.appendChild(opt);
-        }
-      });
+    function preencherClienteSimulacao(cliente) {
+      if (!cliente) {
+        limparClienteSimulacaoSelecionado();
+        return;
+      }
+
+      clienteSimulacaoSelecionado = cliente;
+      if (clienteSimulacaoIdInput) clienteSimulacaoIdInput.value = String(cliente.id);
+      if (clienteSimulacaoNomeInput) clienteSimulacaoNomeInput.value = cliente.nome || '';
+      if (clienteSimulacaoRendaInput) clienteSimulacaoRendaInput.value = formatMoney(cliente.renda_mensal || 0);
     }
 
     function aplicarBuscaSimulacaoClientes() {
       const filtrados = filtrarClientes(clientes, termoBuscaSimulacao);
-      preencherSelects(filtrados);
+      const termo = String(termoBuscaSimulacao || '').trim();
 
-      if (termoBuscaSimulacao.trim()) {
-        document.getElementById('msg-simulacao').textContent = `Clientes encontrados para simulacao: ${filtrados.length}`;
+      if (!termo) {
+        limparClienteSimulacaoSelecionado();
+        document.getElementById('msg-simulacao').textContent = 'Digite CPF ou nome para localizar o cliente da simulacao.';
+        return;
       }
+
+      if (!filtrados.length) {
+        limparClienteSimulacaoSelecionado();
+        document.getElementById('msg-simulacao').textContent = 'Nenhum cliente encontrado para a busca informada.';
+        return;
+      }
+
+      const termoLower = termo.toLowerCase();
+      const termoDigits = onlyDigits(termo);
+      const matchExato = filtrados.find((cliente) => {
+        const nome = String(cliente.nome || '').trim().toLowerCase();
+        const cpfDigits = onlyDigits(String(cliente.cpf || ''));
+        return nome === termoLower || (termoDigits && cpfDigits === termoDigits);
+      });
+
+      if (matchExato) {
+        preencherClienteSimulacao(matchExato);
+        document.getElementById('msg-simulacao').textContent = `Cliente selecionado: ${matchExato.nome}.`;
+        return;
+      }
+
+      if (filtrados.length === 1) {
+        preencherClienteSimulacao(filtrados[0]);
+        document.getElementById('msg-simulacao').textContent = `Cliente selecionado: ${filtrados[0].nome}.`;
+        return;
+      }
+
+      limparClienteSimulacaoSelecionado();
+      document.getElementById('msg-simulacao').textContent = `Foram encontrados ${filtrados.length} clientes. Refine a busca para selecionar apenas um.`;
     }
 
     function filtrarClientes(lista, termo) {
@@ -2143,7 +2550,7 @@
 
       if (!filtrados.length) {
         if (!clientes.length) {
-          list.innerHTML = '<div class="notice">Clique em "Recarregar lista" para carregar clientes.</div>';
+          list.innerHTML = '<div class="notice">A lista de clientes e carregada automaticamente.</div>';
         } else {
           list.innerHTML = '<div class="notice">Nenhum cliente encontrado para a busca informada.</div>';
         }
@@ -2234,8 +2641,6 @@
         }
       }
     });
-
-    document.getElementById('btn-recarregar').addEventListener('click', carregarClientes);
 
     document.getElementById('btn-ir-cadastro-cliente').addEventListener('click', () => {
       abrirTab('clientes');
@@ -2390,9 +2795,9 @@
     });
 
     document.getElementById('btn-simular').addEventListener('click', async () => {
-      const clienteId = document.getElementById('s-cliente').value;
+      const clienteId = Number(clienteSimulacaoIdInput?.value || clienteSimulacaoSelecionado?.id || 0);
       if (!clienteId) {
-        document.getElementById('msg-simulacao').textContent = 'Selecione um cliente valido para simular.';
+        document.getElementById('msg-simulacao').textContent = 'Busque e selecione um cliente valido para simular.';
         return;
       }
       const payload = {
@@ -2411,7 +2816,7 @@
             ...payload,
           }),
         });
-        ultimaSimulacao = { clienteId, payload, resultado: sim };
+        ultimaSimulacao = { clienteId: Number(clienteId), payload, resultado: sim };
         document.getElementById('btn-formalizar').disabled = false;
         document.getElementById('msg-simulacao').textContent = `OK: total ${formatMoney(sim.valor_total)} | parcela ${formatMoney(sim.valor_parcela)} | risco ${sim.risco} | data ${formatDateBr(sim.data_simulacao)}`;
         renderParcelasSimulacao(sim.parcelas_detalhadas || []);
@@ -2428,8 +2833,15 @@
       openFormalizacaoDialog();
     });
 
+    if (btnAjudaTipoImposto) {
+      btnAjudaTipoImposto.addEventListener('click', openTipoImpostoDialog);
+    }
+
     btnCancelarFormalizacao.addEventListener('click', closeFormalizacaoDialog);
     btnConfirmarFormalizacao.addEventListener('click', confirmarFormalizacao);
+    if (btnFecharAjudaTipoImposto) {
+      btnFecharAjudaTipoImposto.addEventListener('click', closeTipoImpostoDialog);
+    }
     btnCancelarExcluirCliente.addEventListener('click', closeExcluirClienteDialog);
     btnConfirmarExcluirCliente.addEventListener('click', confirmarExcluirCliente);
     btnCancelarExcluirEndereco.addEventListener('click', closeExcluirEnderecoDialog);
@@ -2447,6 +2859,14 @@
         closeFormalizacaoDialog();
       }
     });
+
+    if (dialogTipoImposto) {
+      dialogTipoImposto.addEventListener('click', (event) => {
+        if (event.target === dialogTipoImposto) {
+          closeTipoImpostoDialog();
+        }
+      });
+    }
 
     dialogExcluirCliente.addEventListener('click', (event) => {
       if (event.target === dialogExcluirCliente) {
@@ -2488,6 +2908,9 @@
       if (event.key === 'Escape' && !dialog.classList.contains('hidden')) {
         closeFormalizacaoDialog();
       }
+      if (event.key === 'Escape' && dialogTipoImposto && !dialogTipoImposto.classList.contains('hidden')) {
+        closeTipoImpostoDialog();
+      }
       if (event.key === 'Escape' && !dialogExcluirCliente.classList.contains('hidden')) {
         closeExcluirClienteDialog();
       }
@@ -2506,6 +2929,9 @@
       if (event.key === 'Escape' && !dialogSalvarCliente.classList.contains('hidden')) {
         closeSalvarClienteDialog();
       }
+      if (event.key === 'Escape' && dialogDashboardCompleto && !dialogDashboardCompleto.classList.contains('hidden')) {
+        fecharDashboardFullscreen();
+      }
     });
 
     buscaInvestimentosInput.addEventListener('input', (event) => {
@@ -2513,9 +2939,24 @@
       aplicarBuscaInvestimentos();
     });
 
-    btnCarregarDashboardCompleto.addEventListener('click', () => {
-      carregarDashboardCompleto();
+    btnCarregarDashboardCompleto.addEventListener('click', async () => {
+      await carregarDashboardCompleto();
+      abrirDashboardFullscreen();
     });
+
+    if (btnFecharDashboardFullscreen) {
+      btnFecharDashboardFullscreen.addEventListener('click', () => {
+        fecharDashboardFullscreen();
+      });
+    }
+
+    if (dialogDashboardCompleto) {
+      dialogDashboardCompleto.addEventListener('click', (event) => {
+        if (event.target === dialogDashboardCompleto) {
+          fecharDashboardFullscreen();
+        }
+      });
+    }
 
     btnVoltarListaInvestimentos.addEventListener('click', () => {
       abrirTab('investimentos');
