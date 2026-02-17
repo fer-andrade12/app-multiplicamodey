@@ -1,0 +1,2587 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MultiplicaMoney</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg: #0b0b16;
+      --card: #1a1330;
+      --accent: #7c3aed;
+      --accent-2: #a855f7;
+      --accent-3: #22d3ee;
+      --text: #f5f3ff;
+      --muted: #c4b5fd;
+      --border: #2a1f47;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      background: radial-gradient(1200px 600px at 10% 10%, #1b1438, #0b0b16 60%);
+      color: var(--text);
+      padding: 24px;
+    }
+
+    .bg-orb {
+      position: fixed;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,58,237,0.35), rgba(124,58,237,0));
+      top: -120px;
+      right: -160px;
+      pointer-events: none;
+      filter: blur(2px);
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--accent-2);
+      letter-spacing: -0.2px;
+    }
+
+    .badge {
+      padding: 6px 12px;
+      background: rgba(34, 211, 238, 0.15);
+      border: 1px solid rgba(34, 211, 238, 0.3);
+      border-radius: 999px;
+      color: var(--accent-3);
+      font-size: 12px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .card h2 {
+      margin: 0 0 8px 0;
+      font-size: 15px;
+      color: var(--accent);
+    }
+
+    .metric {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .muted { color: var(--muted); }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: "Space Grotesk", sans-serif;
+    }
+
+    .tab-btn.active {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      border-color: transparent;
+    }
+
+    .tab {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab.active { display: block; }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+
+    label { font-size: 12px; color: var(--muted); }
+
+    input, select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: #120c24;
+      color: var(--text);
+    }
+
+    button.primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: #fff;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button.ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px dashed var(--border);
+      padding: 10px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 12px;
+    }
+
+    .notice {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(124,58,237,0.1);
+      border: 1px solid rgba(124,58,237,0.3);
+      color: var(--muted);
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.15);
+      border: 1px solid rgba(124,58,237,0.35);
+      color: var(--accent-2);
+      font-size: 12px;
+    }
+
+    .invest-item {
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .invest-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124,58,237,0.55);
+    }
+
+    .invest-item.selected {
+      border-color: rgba(168,85,247,0.9);
+      box-shadow: 0 0 0 1px rgba(168,85,247,0.35);
+    }
+
+    .action-panel {
+      margin-top: 14px;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(124,58,237,0.3);
+      background: rgba(124,58,237,0.08);
+    }
+
+    .invest-top-bar {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: linear-gradient(135deg, rgba(124,58,237,0.18), rgba(34,211,238,0.08));
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .invest-top-btn {
+      border-style: solid !important;
+      border-color: rgba(168, 85, 247, 0.65) !important;
+      color: #efe7ff !important;
+      background: rgba(124,58,237,0.18) !important;
+    }
+
+    .invest-top-btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .invest-top-btn-strong {
+      border-style: solid !important;
+      border-color: rgba(147, 51, 234, 0.85) !important;
+      color: #ffffff !important;
+      background: linear-gradient(135deg, rgba(109,40,217,0.95), rgba(126,34,206,0.95)) !important;
+      font-weight: 700;
+    }
+
+    .invest-top-btn-strong:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .invest-prorrogar-bar {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .parcela-item {
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .parcela-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124,58,237,0.55);
+    }
+
+    .parcela-item.selected {
+      border-color: rgba(168,85,247,0.9);
+      box-shadow: 0 0 0 1px rgba(168,85,247,0.35);
+    }
+
+    .cliente-item {
+      cursor: pointer;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .cliente-item:hover {
+      transform: translateY(-1px);
+      border-color: rgba(124,58,237,0.55);
+    }
+
+    .cliente-item.selected {
+      border-color: rgba(168,85,247,0.9);
+      box-shadow: 0 0 0 1px rgba(168,85,247,0.35);
+    }
+
+    .dialog-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(7, 5, 15, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1000;
+    }
+
+    .dialog-overlay.hidden {
+      display: none;
+    }
+
+    .dialog-card {
+      width: 100%;
+      max-width: 520px;
+      background: linear-gradient(180deg, #1d1435 0%, #151027 100%);
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      border-radius: 18px;
+      box-shadow: 0 28px 60px rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .dialog-title {
+      margin: 0;
+      color: #f5f3ff;
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .dialog-body {
+      margin-top: 8px;
+      color: #d9ccff;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .dialog-summary {
+      margin-top: 14px;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.12);
+      border-radius: 12px;
+      padding: 12px;
+      display: grid;
+      gap: 8px;
+      font-size: 13px;
+      color: #f2ecff;
+    }
+
+    .dialog-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dialog-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding: 12px;
+      }
+
+      .bg-orb {
+        width: 260px;
+        height: 260px;
+        top: -80px;
+        right: -110px;
+      }
+
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+        line-height: 1.15;
+      }
+
+      .badge {
+        align-self: flex-start;
+      }
+
+      .grid,
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tabs {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 4px;
+      }
+
+      .tab-btn {
+        white-space: nowrap;
+        flex: 0 0 auto;
+      }
+
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .row button,
+      .row input,
+      .invest-top-bar button,
+      .invest-prorrogar-bar button,
+      .invest-prorrogar-bar input {
+        width: 100%;
+        max-width: 100% !important;
+      }
+
+      .invest-top-bar,
+      .invest-prorrogar-bar,
+      .dialog-actions,
+      .dialog-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .dialog-card {
+        padding: 16px;
+      }
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+      body {
+        padding: 18px;
+      }
+
+      h1 {
+        font-size: 28px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tabs {
+        gap: 8px;
+      }
+
+      .row {
+        gap: 10px;
+      }
+
+      .invest-prorrogar-bar input {
+        max-width: 100% !important;
+      }
+    }
+
+    @media (min-width: 1025px) {
+      body {
+        max-width: 1320px;
+        margin: 0 auto;
+      }
+
+      .tabs {
+        overflow: visible;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-orb"></div>
+  <header>
+    <div>
+      <h1>MultiplicaMoney</h1>
+    </div>
+    <div class="badge">API ativa em 8080</div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Total investido</h2>
+      <div id="kpi-investido" class="metric">R$ 0,00</div>
+      <div class="muted">Capital principal</div>
+    </div>
+    <div class="card">
+      <h2>Total em aberto</h2>
+      <div id="kpi-aberto" class="metric">R$ 0,00</div>
+      <div class="muted">Saldo devedor</div>
+    </div>
+    <div class="card">
+      <h2>Total vencido</h2>
+      <div id="kpi-vencido" class="metric">R$ 0,00</div>
+      <div class="muted">Parcelas pendentes</div>
+    </div>
+    <div class="card">
+      <h2>Lucro real</h2>
+      <div id="kpi-lucro" class="metric">R$ 0,00</div>
+      <div class="muted">Recebido - principal</div>
+    </div>
+    <div class="card">
+      <h2>Clientes em atraso</h2>
+      <div id="kpi-clientes-atraso" class="metric">0</div>
+      <div class="muted">Com parcela vencida</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="clientes">Cadastro</button>
+    <button class="tab-btn" data-tab="clientes-lista">Clientes</button>
+    <button class="tab-btn" data-tab="simulacao">Simulacao</button>
+    <button class="tab-btn" data-tab="investimentos">Investimentos</button>
+    <button class="tab-btn" data-tab="dashboard-completo">Dashboard completo</button>
+  </div>
+
+  <section id="tab-clientes" class="tab active card">
+    <h2>Cadastrar cliente</h2>
+    <div class="form-grid">
+      <div>
+        <label>Nome</label>
+        <input id="c-nome" placeholder="Nome completo" />
+      </div>
+      <div>
+        <label>Email</label>
+        <input id="c-email" type="email" placeholder="nome@empresa.com" />
+      </div>
+      <div>
+        <label>CPF</label>
+        <input id="c-cpf" placeholder="Somente numeros" />
+      </div>
+      <div>
+        <label>RG</label>
+        <input id="c-rg" placeholder="RG" />
+      </div>
+      <div>
+        <label>Renda mensal</label>
+        <input id="c-renda" type="text" inputmode="decimal" placeholder="R$ 3.500,00" />
+      </div>
+      <div>
+        <label>Tipo de trabalho</label>
+        <select id="c-trabalho">
+          <option value="AUTONOMO">Autonomo</option>
+          <option value="CLT">CLT</option>
+          <option value="CNPJ_MEI">CNPJ (MEI)</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <button id="btn-criar-cliente" class="primary">Cadastrar</button>
+    </div>
+    <div id="msg-cadastro" class="notice">Preencha os dados e clique em Cadastrar.</div>
+  </section>
+
+  <section id="tab-clientes-lista" class="tab card">
+    <h2>Clientes cadastrados</h2>
+    <div class="row">
+      <button id="btn-ir-cadastro-cliente" class="primary">Cadastrar cliente</button>
+      <button id="btn-recarregar" class="primary">Carregar lista</button>
+      <input id="c-busca" type="text" placeholder="Buscar cliente por nome, CPF ou email" style="max-width: 420px;" />
+    </div>
+    <div id="msg-clientes" class="notice">Clique em "Carregar lista" para exibir clientes.</div>
+    <div id="lista-clientes" class="list"></div>
+  </section>
+
+  <section id="tab-cliente-overview" class="tab card">
+    <h2>Cliente overview</h2>
+    <div class="action-panel">
+      <h3 style="margin:0 0 10px 0; color: var(--accent-2);">Cliente selecionado</h3>
+      <div id="msg-cliente-detalhe" class="muted">Selecione um cliente da lista para ver detalhes.</div>
+      <div class="form-grid" style="margin-top: 10px;">
+        <div>
+          <label>Nome</label>
+          <input id="d-nome" placeholder="Nome" />
+        </div>
+        <div>
+          <label>Email</label>
+          <input id="d-email" type="email" placeholder="Email" />
+        </div>
+        <div>
+          <label>CPF</label>
+          <input id="d-cpf" placeholder="CPF" />
+        </div>
+        <div>
+          <label>RG</label>
+          <input id="d-rg" placeholder="RG" />
+        </div>
+        <div>
+          <label>Renda mensal</label>
+          <input id="d-renda" type="text" inputmode="decimal" placeholder="R$ 0,00" />
+        </div>
+        <div>
+          <label>Tipo de trabalho</label>
+          <select id="d-trabalho">
+            <option value="AUTONOMO">Autonomo</option>
+            <option value="CLT">CLT</option>
+            <option value="CNPJ_MEI">CNPJ (MEI)</option>
+          </select>
+        </div>
+      </div>
+
+      <h3 style="margin:14px 0 10px 0; color: var(--accent-2);">Cadastrar endereco</h3>
+      <div class="form-grid">
+        <div><label>CEP</label><input id="e-cep" placeholder="30123000" /></div>
+        <div><label>Logradouro</label><input id="e-logradouro" placeholder="Rua" /></div>
+        <div><label>Numero</label><input id="e-numero" placeholder="100" /></div>
+        <div><label>Complemento</label><input id="e-complemento" placeholder="Apto / Sala" /></div>
+        <div><label>Bairro</label><input id="e-bairro" placeholder="Centro" /></div>
+        <div><label>Cidade</label><input id="e-cidade" placeholder="Cidade" /></div>
+        <div><label>Estado</label><input id="e-estado" placeholder="MG" /></div>
+        <div>
+          <label>Tipo</label>
+          <select id="e-tipo">
+            <option value="RESIDENCIAL">RESIDENCIAL</option>
+            <option value="COMERCIAL">COMERCIAL</option>
+          </select>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 8px;">
+        <button id="btn-salvar-cliente" class="primary">Salvar dados do cliente e endereco</button>
+      </div>
+      <div id="lista-enderecos-cliente" class="list"></div>
+    </div>
+  </section>
+
+  <section id="tab-simulacao" class="tab card">
+    <h2>Simulacao de investimento</h2>
+    <div class="form-grid">
+      <div>
+        <label>Buscar cliente (CPF ou nome)</label>
+        <input id="s-busca-cliente" type="text" placeholder="Digite CPF ou nome" />
+      </div>
+      <div>
+        <label>Cliente</label>
+        <select id="s-cliente"></select>
+      </div>
+      <div>
+        <label>Valor principal</label>
+        <input id="s-principal" type="text" inputmode="decimal" placeholder="R$ 10.000,00" />
+      </div>
+      <div>
+        <label>Taxa juros (max 0.20)</label>
+        <input id="s-taxa" type="text" inputmode="decimal" placeholder="2,00%" />
+      </div>
+      <div>
+        <label>Quantidade parcelas</label>
+        <input id="s-parcelas" type="number" step="1" placeholder="12" />
+      </div>
+      <div>
+        <label>Tipo juros</label>
+        <select id="s-tipo">
+          <option value="COMPOSTO">COMPOSTO</option>
+          <option value="SIMPLES">SIMPLES</option>
+        </select>
+      </div>
+    </div>
+    <div class="row">
+      <button id="btn-simular" class="primary">Simular</button>
+      <button id="btn-formalizar" class="ghost" disabled>Formalizar contratacao</button>
+    </div>
+    <div id="msg-simulacao" class="notice">Sem simulacao.</div>
+    <div id="lista-parcelas-simulacao" class="list"></div>
+  </section>
+
+  <section id="tab-investimentos" class="tab card">
+    <h2>Lista de investimentos</h2>
+    <div class="row">
+      <input id="i-busca" type="text" placeholder="Buscar por codigo, nome do cliente ou CPF" style="max-width: 420px;" />
+    </div>
+    <div id="msg-investimentos" class="notice">Lista carregada automaticamente. Selecione um investimento para abrir o overview.</div>
+    <div id="lista-investimentos" class="list"></div>
+  </section>
+
+  <section id="tab-dashboard-completo" class="tab card">
+    <h2>Dashboard completo</h2>
+    <div class="row">
+      <button id="btn-carregar-dashboard-completo" class="primary">Ver dashboard completo</button>
+    </div>
+    <div id="msg-dashboard-completo" class="notice">Clique para carregar os dados completos do dashboard.</div>
+
+    <div class="grid" style="margin-top: 12px; margin-bottom: 0;">
+      <div class="card">
+        <h2>Valor investido</h2>
+        <div id="dc-valor-investido" class="metric">R$ 0,00</div>
+      </div>
+      <div class="card">
+        <h2>Valor lucro total</h2>
+        <div id="dc-lucro-total" class="metric">R$ 0,00</div>
+      </div>
+      <div class="card">
+        <h2>Valor lucro recebido</h2>
+        <div id="dc-lucro-recebido" class="metric">R$ 0,00</div>
+      </div>
+      <div class="card">
+        <h2>Valor lucro a receber</h2>
+        <div id="dc-lucro-a-receber" class="metric">R$ 0,00</div>
+      </div>
+      <div class="card">
+        <h2>Total de clientes</h2>
+        <div id="dc-total-clientes" class="metric">0</div>
+      </div>
+      <div class="card">
+        <h2>Receita bruta</h2>
+        <div id="dc-receita-bruta" class="metric">R$ 0,00</div>
+      </div>
+      <div class="card">
+        <h2>Receita liquida</h2>
+        <div id="dc-receita-liquida" class="metric">R$ 0,00</div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top: 16px;">
+      <strong style="color: var(--accent-2);">Volume de clientes por mes</strong>
+    </div>
+    <div id="lista-dashboard-clientes-mes" class="list"></div>
+  </section>
+
+  <section id="tab-investimento-overview" class="tab card">
+    <h2>Investimento overview</h2>
+    <div class="action-panel">
+      <h3 style="margin:0 0 10px 0; color: var(--accent-2);">Manipular investimento selecionado</h3>
+      <div id="detalhes-investimento" class="muted">Nenhum investimento selecionado.</div>
+      <div class="invest-top-bar">
+        <button id="btn-quitar-total" class="primary invest-top-btn-strong" disabled>Quitar valor total</button>
+      </div>
+      <div class="form-grid" style="margin-top: 12px;">
+        <div>
+          <h3 style="margin:0 0 8px 0; color: var(--accent-2);">Parcelas em aberto</h3>
+          <div id="lista-parcelas-abertas" class="list"></div>
+        </div>
+        <div>
+          <h3 style="margin:0 0 8px 0; color: var(--accent-2);">Parcelas pagas</h3>
+          <div id="lista-parcelas-pagas" class="list"></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top: 12px;">
+        <button id="btn-voltar-lista-investimentos" class="ghost">Voltar para lista</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="tab-parcela-overview" class="tab card">
+    <h2>Parcela overview</h2>
+    <div class="action-panel">
+      <h3 style="margin:0 0 10px 0; color: var(--accent-2);">Manipular parcela selecionada</h3>
+      <div id="detalhes-parcela-overview" class="muted">Selecione uma parcela no overview do investimento.</div>
+      <div class="invest-top-bar">
+        <button id="btn-quitar-parcela-overview" class="ghost invest-top-btn" disabled>Quitar parcela</button>
+      </div>
+      <div class="invest-prorrogar-bar">
+        <input id="p-dias-parcela-overview" type="number" min="1" step="1" placeholder="Dias para prorrogar esta parcela" style="max-width: 320px;" />
+        <button id="btn-prorrogar-parcela-overview" class="ghost" disabled>Aplicar prorrogacao</button>
+      </div>
+      <div class="notice" style="margin-top: 8px; max-width: 360px; margin-left: auto;">Taxa fixa da prorrogacao: 2,00% ao dia</div>
+      <div id="msg-parcela-overview" class="notice">Somente a proxima parcela pendente pode ser quitada.</div>
+      <div class="row" style="margin-top: 12px;">
+        <button id="btn-voltar-investimento-overview" class="ghost">Voltar para investimento</button>
+      </div>
+    </div>
+  </section>
+
+  <div id="formalizacao-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+    <div class="dialog-card">
+      <h3 id="dialog-title" class="dialog-title">Confirmar formalizacao da contratacao</h3>
+      <p class="dialog-body">
+        Voce esta prestes a formalizar este investimento. Essa acao gera o contrato e registra as parcelas iniciais.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Cliente</span><strong id="dialog-cliente">-</strong></div>
+        <div class="dialog-row"><span>Valor principal</span><strong id="dialog-principal">-</strong></div>
+        <div class="dialog-row"><span>Taxa de juros</span><strong id="dialog-taxa">-</strong></div>
+        <div class="dialog-row"><span>Parcelas</span><strong id="dialog-parcelas">-</strong></div>
+        <div class="dialog-row"><span>Valor da parcela</span><strong id="dialog-valor-parcela">-</strong></div>
+        <div class="dialog-row"><span>1o vencimento</span><strong id="dialog-primeiro-vencimento">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-formalizacao" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-formalizacao" class="primary" type="button">Confirmar formalizacao</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="excluir-cliente-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="excluir-cliente-dialog-title">
+    <div class="dialog-card">
+      <h3 id="excluir-cliente-dialog-title" class="dialog-title">Confirmar exclusao de cliente</h3>
+      <p class="dialog-body">
+        Esta acao remove o cliente selecionado de forma permanente. Revise os dados antes de confirmar.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Cliente</span><strong id="excluir-dialog-cliente">-</strong></div>
+        <div class="dialog-row"><span>CPF</span><strong id="excluir-dialog-cpf">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-excluir-cliente" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-excluir-cliente" class="primary" type="button">Confirmar exclusao</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="excluir-endereco-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="excluir-endereco-dialog-title">
+    <div class="dialog-card">
+      <h3 id="excluir-endereco-dialog-title" class="dialog-title">Confirmar exclusao de endereco</h3>
+      <p class="dialog-body">
+        Esta acao remove o endereco selecionado de forma permanente. Revise os dados antes de confirmar.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Cliente</span><strong id="excluir-endereco-dialog-cliente">-</strong></div>
+        <div class="dialog-row"><span>CEP</span><strong id="excluir-endereco-dialog-cep">-</strong></div>
+        <div class="dialog-row"><span>Endereco</span><strong id="excluir-endereco-dialog-endereco">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-excluir-endereco" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-excluir-endereco" class="primary" type="button">Confirmar exclusao</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="pagamento-parcela-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="pagamento-parcela-dialog-title">
+    <div class="dialog-card">
+      <h3 id="pagamento-parcela-dialog-title" class="dialog-title">Confirmar pagamento da parcela</h3>
+      <p class="dialog-body">
+        Revise os dados abaixo para confirmar o pagamento da proxima parcela em aberto.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Numero da parcela</span><strong id="pagamento-dialog-numero">-</strong></div>
+        <div class="dialog-row"><span>Valor da parcela</span><strong id="pagamento-dialog-valor">-</strong></div>
+        <div class="dialog-row"><span>Data de vencimento</span><strong id="pagamento-dialog-vencimento">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-pagamento-parcela" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-pagamento-parcela" class="primary" type="button">Confirmar pagamento</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="quitar-total-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="quitar-total-dialog-title">
+    <div class="dialog-card">
+      <h3 id="quitar-total-dialog-title" class="dialog-title">Confirmar quitacao total</h3>
+      <p class="dialog-body">
+        Esta acao quita o investimento selecionado e liquida o saldo devedor em aberto.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Investimento</span><strong id="quitar-total-dialog-investimento">-</strong></div>
+        <div class="dialog-row"><span>Valor total da quitacao</span><strong id="quitar-total-dialog-valor">-</strong></div>
+        <div class="dialog-row"><span>Parcelas em aberto</span><strong id="quitar-total-dialog-parcelas">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-quitar-total" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-quitar-total" class="primary" type="button">Confirmar quitacao</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="prorrogacao-parcela-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="prorrogacao-parcela-dialog-title">
+    <div class="dialog-card">
+      <h3 id="prorrogacao-parcela-dialog-title" class="dialog-title">Confirmar prorrogacao da parcela</h3>
+      <p class="dialog-body">
+        Esta acao atualiza a data de vencimento e o valor da parcela selecionada com juros de 2,00% ao dia prorrogado.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Parcela</span><strong id="prorrogacao-dialog-numero">-</strong></div>
+        <div class="dialog-row"><span>Valor atual</span><strong id="prorrogacao-dialog-valor-atual">-</strong></div>
+        <div class="dialog-row"><span>Novo valor</span><strong id="prorrogacao-dialog-novo-valor">-</strong></div>
+        <div class="dialog-row"><span>Vencimento atual</span><strong id="prorrogacao-dialog-vencimento-atual">-</strong></div>
+        <div class="dialog-row"><span>Novo vencimento</span><strong id="prorrogacao-dialog-novo-vencimento">-</strong></div>
+        <div class="dialog-row"><span>Dias prorrogados</span><strong id="prorrogacao-dialog-dias">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-prorrogacao-parcela" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-prorrogacao-parcela" class="primary" type="button">Confirmar prorrogacao</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="salvar-cliente-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="salvar-cliente-dialog-title">
+    <div class="dialog-card">
+      <h3 id="salvar-cliente-dialog-title" class="dialog-title">Dados salvos com sucesso</h3>
+      <p id="salvar-cliente-dialog-body" class="dialog-body">
+        As informacoes do cliente foram atualizadas.
+      </p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Cliente</span><strong id="salvar-cliente-dialog-cliente">-</strong></div>
+        <div class="dialog-row"><span>Endereco</span><strong id="salvar-cliente-dialog-endereco">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-fechar-salvar-cliente" class="primary" type="button">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = 'http://localhost:8080';
+    let clientes = [];
+    let termoBuscaClientes = '';
+    let clienteSelecionado = null;
+    let clienteExclusaoPendente = null;
+    let enderecoExclusaoPendente = null;
+    let termoBuscaSimulacao = '';
+    let ultimaSimulacao = null;
+    let investimentosCache = [];
+    let termoBuscaInvestimentos = '';
+    let investimentoSelecionado = null;
+    let parcelasInvestimentoSelecionado = [];
+    let parcelaOverviewSelecionada = null;
+    let pagamentoParcelaPendente = null;
+    let quitacaoTotalPendente = null;
+    let prorrogacaoParcelaPendente = null;
+
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabs = {
+      clientes: document.getElementById('tab-clientes'),
+      'clientes-lista': document.getElementById('tab-clientes-lista'),
+      'cliente-overview': document.getElementById('tab-cliente-overview'),
+      simulacao: document.getElementById('tab-simulacao'),
+      investimentos: document.getElementById('tab-investimentos'),
+      'dashboard-completo': document.getElementById('tab-dashboard-completo'),
+      'investimento-overview': document.getElementById('tab-investimento-overview'),
+      'parcela-overview': document.getElementById('tab-parcela-overview'),
+    };
+
+    function abrirTab(nomeTab) {
+      tabButtons.forEach((b) => b.classList.toggle('active', b.dataset.tab === nomeTab));
+      Object.entries(tabs).forEach(([key, value]) => {
+        if (!value) return;
+        value.classList.toggle('active', key === nomeTab);
+      });
+
+      if (nomeTab === 'clientes-lista') {
+        carregarClientes();
+      }
+
+      if (nomeTab === 'investimentos') {
+        carregarInvestimentosTodos();
+      }
+
+      if (nomeTab === 'dashboard-completo') {
+        carregarDashboardCompleto();
+      }
+
+      if (nomeTab === 'cliente-overview' && !clienteSelecionado) {
+        msgClienteDetalhe.textContent = 'Selecione um cliente na aba Clientes para abrir o overview.';
+      }
+
+      if (nomeTab === 'investimento-overview' && !investimentoSelecionado) {
+        detalhesInvestimento.textContent = 'Selecione um investimento na aba Investimentos para abrir o overview.';
+      }
+
+      if (nomeTab === 'parcela-overview' && !parcelaOverviewSelecionada) {
+        detalhesParcelaOverview.textContent = 'Selecione uma parcela no overview do investimento.';
+      }
+    }
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        abrirTab(btn.dataset.tab);
+      });
+    });
+
+    const cpfInput = document.getElementById('c-cpf');
+    const emailInput = document.getElementById('c-email');
+    const rgInput = document.getElementById('c-rg');
+    const rendaInput = document.getElementById('c-renda');
+    const detalheNomeInput = document.getElementById('d-nome');
+    const detalheEmailInput = document.getElementById('d-email');
+    const detalheCpfInput = document.getElementById('d-cpf');
+    const detalheRgInput = document.getElementById('d-rg');
+    const detalheRendaInput = document.getElementById('d-renda');
+    const detalheTrabalhoInput = document.getElementById('d-trabalho');
+    const msgCadastro = document.getElementById('msg-cadastro');
+    const msgClienteDetalhe = document.getElementById('msg-cliente-detalhe');
+    const btnSalvarCliente = document.getElementById('btn-salvar-cliente');
+    const listaEnderecosCliente = document.getElementById('lista-enderecos-cliente');
+    const enderecoCepInput = document.getElementById('e-cep');
+    const enderecoLogradouroInput = document.getElementById('e-logradouro');
+    const enderecoNumeroInput = document.getElementById('e-numero');
+    const enderecoBairroInput = document.getElementById('e-bairro');
+    const enderecoCidadeInput = document.getElementById('e-cidade');
+    const enderecoEstadoInput = document.getElementById('e-estado');
+    const principalInput = document.getElementById('s-principal');
+    const taxaInput = document.getElementById('s-taxa');
+    const buscaClientesInput = document.getElementById('c-busca');
+    const buscaClienteSimulacaoInput = document.getElementById('s-busca-cliente');
+    const buscaInvestimentosInput = document.getElementById('i-busca');
+    const btnCarregarDashboardCompleto = document.getElementById('btn-carregar-dashboard-completo');
+    const msgDashboardCompleto = document.getElementById('msg-dashboard-completo');
+    const listaDashboardClientesMes = document.getElementById('lista-dashboard-clientes-mes');
+    const detalhesInvestimento = document.getElementById('detalhes-investimento');
+    const detalhesParcelaOverview = document.getElementById('detalhes-parcela-overview');
+    const msgParcelaOverview = document.getElementById('msg-parcela-overview');
+    const listaParcelasAbertas = document.getElementById('lista-parcelas-abertas');
+    const listaParcelasPagas = document.getElementById('lista-parcelas-pagas');
+    const msgInvestimentos = document.getElementById('msg-investimentos');
+    const btnQuitarTotal = document.getElementById('btn-quitar-total');
+    const btnQuitarParcelaOverview = document.getElementById('btn-quitar-parcela-overview');
+    const btnProrrogarParcelaOverview = document.getElementById('btn-prorrogar-parcela-overview');
+    const prorrogacaoDiasParcelaOverviewInput = document.getElementById('p-dias-parcela-overview');
+    const btnVoltarListaInvestimentos = document.getElementById('btn-voltar-lista-investimentos');
+    const btnVoltarInvestimentoOverview = document.getElementById('btn-voltar-investimento-overview');
+    const dialog = document.getElementById('formalizacao-dialog');
+    const btnCancelarFormalizacao = document.getElementById('btn-cancelar-formalizacao');
+    const btnConfirmarFormalizacao = document.getElementById('btn-confirmar-formalizacao');
+    const dialogCliente = document.getElementById('dialog-cliente');
+    const dialogPrincipal = document.getElementById('dialog-principal');
+    const dialogTaxa = document.getElementById('dialog-taxa');
+    const dialogParcelas = document.getElementById('dialog-parcelas');
+    const dialogValorParcela = document.getElementById('dialog-valor-parcela');
+    const dialogPrimeiroVencimento = document.getElementById('dialog-primeiro-vencimento');
+    const listaParcelasSimulacao = document.getElementById('lista-parcelas-simulacao');
+    const dialogExcluirCliente = document.getElementById('excluir-cliente-dialog');
+    const excluirDialogCliente = document.getElementById('excluir-dialog-cliente');
+    const excluirDialogCpf = document.getElementById('excluir-dialog-cpf');
+    const btnCancelarExcluirCliente = document.getElementById('btn-cancelar-excluir-cliente');
+    const btnConfirmarExcluirCliente = document.getElementById('btn-confirmar-excluir-cliente');
+    const dialogExcluirEndereco = document.getElementById('excluir-endereco-dialog');
+    const excluirEnderecoDialogCliente = document.getElementById('excluir-endereco-dialog-cliente');
+    const excluirEnderecoDialogCep = document.getElementById('excluir-endereco-dialog-cep');
+    const excluirEnderecoDialogEndereco = document.getElementById('excluir-endereco-dialog-endereco');
+    const btnCancelarExcluirEndereco = document.getElementById('btn-cancelar-excluir-endereco');
+    const btnConfirmarExcluirEndereco = document.getElementById('btn-confirmar-excluir-endereco');
+    const dialogPagamentoParcela = document.getElementById('pagamento-parcela-dialog');
+    const pagamentoDialogNumero = document.getElementById('pagamento-dialog-numero');
+    const pagamentoDialogValor = document.getElementById('pagamento-dialog-valor');
+    const pagamentoDialogVencimento = document.getElementById('pagamento-dialog-vencimento');
+    const btnCancelarPagamentoParcela = document.getElementById('btn-cancelar-pagamento-parcela');
+    const btnConfirmarPagamentoParcela = document.getElementById('btn-confirmar-pagamento-parcela');
+    const dialogQuitarTotal = document.getElementById('quitar-total-dialog');
+    const quitarTotalDialogInvestimento = document.getElementById('quitar-total-dialog-investimento');
+    const quitarTotalDialogValor = document.getElementById('quitar-total-dialog-valor');
+    const quitarTotalDialogParcelas = document.getElementById('quitar-total-dialog-parcelas');
+    const btnCancelarQuitarTotal = document.getElementById('btn-cancelar-quitar-total');
+    const btnConfirmarQuitarTotal = document.getElementById('btn-confirmar-quitar-total');
+    const dialogProrrogacaoParcela = document.getElementById('prorrogacao-parcela-dialog');
+    const prorrogacaoDialogNumero = document.getElementById('prorrogacao-dialog-numero');
+    const prorrogacaoDialogValorAtual = document.getElementById('prorrogacao-dialog-valor-atual');
+    const prorrogacaoDialogNovoValor = document.getElementById('prorrogacao-dialog-novo-valor');
+    const prorrogacaoDialogVencimentoAtual = document.getElementById('prorrogacao-dialog-vencimento-atual');
+    const prorrogacaoDialogNovoVencimento = document.getElementById('prorrogacao-dialog-novo-vencimento');
+    const prorrogacaoDialogDias = document.getElementById('prorrogacao-dialog-dias');
+    const btnCancelarProrrogacaoParcela = document.getElementById('btn-cancelar-prorrogacao-parcela');
+    const btnConfirmarProrrogacaoParcela = document.getElementById('btn-confirmar-prorrogacao-parcela');
+    const dialogSalvarCliente = document.getElementById('salvar-cliente-dialog');
+    const salvarClienteDialogBody = document.getElementById('salvar-cliente-dialog-body');
+    const salvarClienteDialogCliente = document.getElementById('salvar-cliente-dialog-cliente');
+    const salvarClienteDialogEndereco = document.getElementById('salvar-cliente-dialog-endereco');
+    const btnFecharSalvarCliente = document.getElementById('btn-fechar-salvar-cliente');
+
+    cpfInput.addEventListener('input', () => {
+      cpfInput.value = formatCpfInput(cpfInput.value);
+    });
+
+    emailInput.addEventListener('input', () => {
+      emailInput.value = normalizarEmail(emailInput.value);
+    });
+
+    rgInput.addEventListener('input', () => {
+      rgInput.value = formatRgInput(rgInput.value);
+    });
+
+    rendaInput.addEventListener('input', () => {
+      rendaInput.value = formatCurrencyInput(rendaInput.value);
+    });
+
+    detalheCpfInput.addEventListener('input', () => {
+      detalheCpfInput.value = formatCpfInput(detalheCpfInput.value);
+    });
+
+    detalheRgInput.addEventListener('input', () => {
+      detalheRgInput.value = formatRgInput(detalheRgInput.value);
+    });
+
+    detalheEmailInput.addEventListener('input', () => {
+      detalheEmailInput.value = normalizarEmail(detalheEmailInput.value);
+    });
+
+    detalheRendaInput.addEventListener('input', () => {
+      detalheRendaInput.value = formatCurrencyInput(detalheRendaInput.value);
+    });
+
+    principalInput.addEventListener('input', () => {
+      principalInput.value = formatCurrencyInput(principalInput.value);
+    });
+
+    taxaInput.addEventListener('input', () => {
+      taxaInput.value = formatPercentInput(taxaInput.value);
+    });
+
+    enderecoCepInput.addEventListener('blur', async () => {
+      await preencherEnderecoPorCep(enderecoCepInput.value);
+    });
+
+    enderecoCepInput.addEventListener('input', () => {
+      enderecoCepInput.value = formatCepInput(enderecoCepInput.value);
+    });
+
+    function formatMoney(value) {
+      const numeric = Number(value || 0);
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+      }).format(Number.isFinite(numeric) ? numeric : 0);
+    }
+
+    function formatDateTimeBr(value) {
+      if (!value) return '-';
+      const raw = String(value).trim();
+
+      const dateOnlyMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (dateOnlyMatch) {
+        const [, year, month, day] = dateOnlyMatch;
+        return `${day}/${month}/${year} 00:00`;
+      }
+
+      const parsed = new Date(raw);
+      if (Number.isNaN(parsed.getTime())) return raw;
+
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }).format(parsed);
+    }
+
+    function formatDateBr(value) {
+      if (!value) return '-';
+      const raw = String(value).trim();
+
+      const dateOnlyMatch = raw.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (dateOnlyMatch) {
+        const [, year, month, day] = dateOnlyMatch;
+        return `${day}/${month}/${year}`;
+      }
+
+      const parsed = new Date(raw);
+      if (Number.isNaN(parsed.getTime())) return raw;
+
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }).format(parsed);
+    }
+
+    function formatReferenciaMes(value) {
+      const raw = String(value || '').trim();
+      const match = raw.match(/^(\d{4})-(\d{2})$/);
+      if (!match) return raw || '-';
+      const [, ano, mes] = match;
+      return `${mes}/${ano}`;
+    }
+
+    function addDaysToDate(value, dias) {
+      const data = new Date(value);
+      if (Number.isNaN(data.getTime())) return null;
+      data.setDate(data.getDate() + Number(dias));
+      return data;
+    }
+
+    function calcularNovoValorParcela(valorAtual, dias, taxaDia = 0.02) {
+      const valor = Number(valorAtual);
+      const diasNumero = Number(dias);
+      const taxa = Number(taxaDia);
+      if (!Number.isFinite(valor) || !Number.isFinite(diasNumero) || !Number.isFinite(taxa)) return 0;
+      return valor + (valor * taxa * diasNumero);
+    }
+
+    function diasAteVencimento(value) {
+      if (!value) return null;
+      const vencimento = new Date(value);
+      if (Number.isNaN(vencimento.getTime())) return null;
+      const hoje = new Date();
+      const vencimentoDia = new Date(vencimento.getFullYear(), vencimento.getMonth(), vencimento.getDate());
+      const hojeDia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
+      const msDia = 24 * 60 * 60 * 1000;
+      return Math.floor((vencimentoDia - hojeDia) / msDia);
+    }
+
+    function onlyDigits(value) {
+      return `${value}`.replace(/\D/g, '');
+    }
+
+    function parseLocaleNumber(value) {
+      const cleaned = `${value}`
+        .replace(/\s/g, '')
+        .replace('R$', '')
+        .replace('%', '')
+        .replace(/\./g, '')
+        .replace(',', '.');
+      const numeric = Number(cleaned);
+      return Number.isFinite(numeric) ? numeric : 0;
+    }
+
+    function formatCpfInput(value) {
+      const digits = onlyDigits(value).slice(0, 11);
+      if (!digits) return '';
+      const part1 = digits.slice(0, 3);
+      const part2 = digits.slice(3, 6);
+      const part3 = digits.slice(6, 9);
+      const part4 = digits.slice(9, 11);
+      let result = part1;
+      if (part2) result += `.${part2}`;
+      if (part3) result += `.${part3}`;
+      if (part4) result += `-${part4}`;
+      return result;
+    }
+
+    function formatRgInput(value) {
+      const digits = onlyDigits(value).slice(0, 9);
+      if (!digits) return '';
+      const part1 = digits.slice(0, 2);
+      const part2 = digits.slice(2, 5);
+      const part3 = digits.slice(5, 8);
+      const part4 = digits.slice(8, 9);
+      let result = part1;
+      if (part2) result += `.${part2}`;
+      if (part3) result += `.${part3}`;
+      if (part4) result += `-${part4}`;
+      return result;
+    }
+
+    function formatCurrencyInput(value) {
+      const digits = onlyDigits(value);
+      if (!digits) return '';
+      const numeric = Number(digits) / 100;
+      return new Intl.NumberFormat('pt-BR', {
+        style: 'currency',
+        currency: 'BRL',
+        minimumFractionDigits: 2,
+      }).format(numeric);
+    }
+
+    function formatPercentInput(value) {
+      const digits = onlyDigits(value).slice(0, 5);
+      if (!digits) return '';
+      const normalized = Number(digits) / 100;
+      return `${normalized.toFixed(2).replace('.', ',')}%`;
+    }
+
+    function parseCurrency(value) {
+      return parseLocaleNumber(value);
+    }
+
+    function parsePercent(value) {
+      const numeric = parseLocaleNumber(value);
+      return numeric / 100;
+    }
+
+    function normalizarEmail(value) {
+      return String(value || '').replace(/\s/g, '').trim().toLowerCase();
+    }
+
+    function validarEmail(value) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizarEmail(value));
+    }
+
+    function normalizarCep(value) {
+      return onlyDigits(value).slice(0, 8);
+    }
+
+    function formatCepInput(value) {
+      const digits = normalizarCep(value);
+      if (digits.length <= 5) return digits;
+      return `${digits.slice(0, 5)}-${digits.slice(5)}`;
+    }
+
+    async function preencherEnderecoPorCep(cepValue) {
+      const cep = normalizarCep(cepValue);
+      if (cep.length !== 8) return;
+
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await response.json();
+
+        if (!response.ok || data.erro) {
+          msgClienteDetalhe.textContent = 'CEP nao encontrado na base ViaCEP.';
+          return;
+        }
+
+        enderecoLogradouroInput.value = data.logradouro || '';
+        enderecoBairroInput.value = data.bairro || '';
+        enderecoCidadeInput.value = data.localidade || '';
+        enderecoEstadoInput.value = data.uf || '';
+
+        if (!enderecoNumeroInput.value) {
+          enderecoNumeroInput.focus();
+        }
+      } catch (_err) {
+        msgClienteDetalhe.textContent = 'Falha ao consultar CEP no ViaCEP.';
+      }
+    }
+
+    function limparDetalheCliente() {
+      clienteSelecionado = null;
+      detalheNomeInput.value = '';
+      detalheEmailInput.value = '';
+      detalheCpfInput.value = '';
+      detalheRgInput.value = '';
+      detalheRendaInput.value = '';
+      detalheTrabalhoInput.value = 'AUTONOMO';
+      msgClienteDetalhe.textContent = 'Selecione um cliente da lista para ver detalhes.';
+      listaEnderecosCliente.innerHTML = '';
+
+      document.querySelectorAll('.cliente-item').forEach((card) => {
+        card.classList.remove('selected');
+      });
+    }
+
+    function renderEnderecosCliente(enderecos) {
+      listaEnderecosCliente.innerHTML = '';
+
+      if (!enderecos.length) {
+        listaEnderecosCliente.innerHTML = '<div class="notice">Cliente sem enderecos cadastrados.</div>';
+        return;
+      }
+
+      enderecos.forEach((end) => {
+        const item = document.createElement('div');
+        item.className = 'card';
+        item.innerHTML = `
+          <div class="row">
+            <strong>${end.tipo}</strong>
+            <span class="pill">${end.cep}</span>
+          </div>
+          <div class="muted">${end.logradouro}, ${end.numero} ${end.complemento || ''}</div>
+          <div class="muted">${end.bairro} - ${end.cidade}/${end.estado}</div>
+          <div class="row"><button class="ghost btn-excluir-endereco" data-endereco-id="${end.id}">Excluir endereco</button></div>
+        `;
+        listaEnderecosCliente.appendChild(item);
+      });
+
+      listaEnderecosCliente.querySelectorAll('.btn-excluir-endereco').forEach((button) => {
+        button.addEventListener('click', async (event) => {
+          if (!clienteSelecionado) return;
+          const enderecoId = Number(event.currentTarget.dataset.enderecoId);
+          const enderecoSelecionado = enderecos.find((item) => Number(item.id) === enderecoId);
+          if (!enderecoSelecionado) return;
+          openExcluirEnderecoDialog(enderecoSelecionado);
+        });
+      });
+    }
+
+    async function carregarEnderecosCliente(clienteId) {
+      try {
+        const enderecos = await fetchJson(`${API}/clientes/${clienteId}/enderecos`);
+        renderEnderecosCliente(enderecos);
+      } catch (err) {
+        listaEnderecosCliente.innerHTML = '<div class="notice">Falha ao carregar enderecos.</div>';
+      }
+    }
+
+    async function selecionarCliente(clienteId) {
+      const selecionado = clientes.find((item) => Number(item.id) === Number(clienteId));
+      if (!selecionado) {
+        limparDetalheCliente();
+        return;
+      }
+
+      clienteSelecionado = selecionado;
+      detalheNomeInput.value = selecionado.nome || '';
+      detalheEmailInput.value = selecionado.email || '';
+      detalheCpfInput.value = formatCpfInput(selecionado.cpf || '');
+      detalheRgInput.value = formatRgInput(selecionado.rg || '');
+      const rendaCentavos = Math.round(Number(selecionado.renda_mensal || 0) * 100);
+      detalheRendaInput.value = formatCurrencyInput(String(rendaCentavos));
+      detalheTrabalhoInput.value = selecionado.tipo_trabalho || 'AUTONOMO';
+      msgClienteDetalhe.textContent = `Cliente selecionado: ${selecionado.nome} | Codigo do cliente: ${selecionado.id}`;
+
+      document.querySelectorAll('.cliente-item').forEach((card) => {
+        card.classList.toggle('selected', Number(card.dataset.clienteId) === Number(clienteId));
+      });
+
+      await carregarEnderecosCliente(clienteId);
+      abrirTab('cliente-overview');
+    }
+
+    function obterProximaParcelaPendente() {
+      return parcelasInvestimentoSelecionado
+        .filter((parcela) => String(parcela.status || '').trim().toUpperCase() === 'PENDENTE')
+        .sort((a, b) => Number(a.numero) - Number(b.numero))[0] || null;
+    }
+
+    function atualizarOverviewParcela() {
+      if (!investimentoSelecionado || !parcelaOverviewSelecionada) {
+        detalhesParcelaOverview.textContent = 'Selecione uma parcela no overview do investimento.';
+        msgParcelaOverview.textContent = 'Somente a proxima parcela pendente pode ser quitada.';
+        btnQuitarParcelaOverview.disabled = true;
+        btnProrrogarParcelaOverview.disabled = true;
+        return;
+      }
+
+      const statusParcela = String(parcelaOverviewSelecionada.status || '').trim().toUpperCase();
+      const statusInvestimento = String(investimentoSelecionado.status || '').trim().toUpperCase();
+      const saldo = Number(investimentoSelecionado.saldo_devedor || 0);
+      const proximaParcelaPendente = obterProximaParcelaPendente();
+      const parcelaPendente = statusParcela === 'PENDENTE';
+      const investimentoAtivo = statusInvestimento !== 'QUITADO' && Number.isFinite(saldo) && saldo > 0.009;
+      const parcelaEhProxima = parcelaPendente
+        && proximaParcelaPendente
+        && Number(proximaParcelaPendente.numero) === Number(parcelaOverviewSelecionada.numero);
+
+      detalhesParcelaOverview.innerHTML = `
+        <div><strong>Investimento:</strong> #${investimentoSelecionado.id} | <strong>Cliente:</strong> ${investimentoSelecionado.cliente_nome || `#${investimentoSelecionado.cliente_id}`}</div>
+        <div><strong>Parcela:</strong> ${parcelaOverviewSelecionada.numero} | <strong>Status:</strong> ${parcelaOverviewSelecionada.status}</div>
+        <div><strong>Valor:</strong> ${formatMoney(parcelaOverviewSelecionada.valor)} | <strong>Vencimento:</strong> ${formatDateBr(parcelaOverviewSelecionada.vencimento)}</div>
+        <div><strong>Saldo investimento:</strong> ${formatMoney(investimentoSelecionado.saldo_devedor)}</div>
+      `;
+
+      btnQuitarParcelaOverview.disabled = !(investimentoAtivo && parcelaEhProxima);
+      btnProrrogarParcelaOverview.disabled = !(investimentoAtivo && parcelaPendente);
+
+      if (!investimentoAtivo) {
+        msgParcelaOverview.textContent = 'Este investimento nao possui saldo em aberto para novas acoes.';
+      } else if (!parcelaPendente) {
+        msgParcelaOverview.textContent = 'Esta parcela nao esta pendente e nao pode receber novas acoes.';
+      } else if (!parcelaEhProxima) {
+        msgParcelaOverview.textContent = 'Somente a proxima parcela pendente pode ser quitada.';
+      } else {
+        msgParcelaOverview.textContent = 'Parcela pronta para quitacao e prorrogacao.';
+      }
+    }
+
+    function abrirOverviewParcela(parcelaNumero) {
+      if (!investimentoSelecionado) return;
+
+      const parcela = parcelasInvestimentoSelecionado.find((item) => Number(item.numero) === Number(parcelaNumero));
+      if (!parcela) {
+        msgInvestimentos.textContent = 'Parcela nao encontrada para este investimento.';
+        return;
+      }
+
+      parcelaOverviewSelecionada = parcela;
+      atualizarOverviewParcela();
+      abrirTab('parcela-overview');
+    }
+
+    function renderParcelasInvestimento(parcelas = []) {
+      const abertas = parcelas.filter((parcela) => parcela.status === 'PENDENTE');
+      const pagas = parcelas.filter((parcela) => parcela.status === 'PAGO');
+
+      listaParcelasAbertas.innerHTML = '';
+      if (!abertas.length) {
+        listaParcelasAbertas.innerHTML = '<div class="notice">Nenhuma parcela em aberto.</div>';
+      } else {
+        abertas.forEach((parcela) => {
+          const item = document.createElement('div');
+          item.className = 'card parcela-item';
+          item.dataset.parcelaNumero = parcela.numero;
+          item.innerHTML = `
+            <div class="row">
+              <strong>Parcela ${parcela.numero}</strong>
+              <span class="pill">${formatMoney(parcela.valor)}</span>
+            </div>
+            <div class="muted">Vencimento: ${formatDateBr(parcela.vencimento)}</div>
+          `;
+          item.addEventListener('click', () => {
+            abrirOverviewParcela(parcela.numero);
+          });
+
+          listaParcelasAbertas.appendChild(item);
+
+      function limparEstadoSimulacao({ mensagem = 'Sem simulacao.', limparCampos = false } = {}) {
+        ultimaSimulacao = null;
+        document.getElementById('btn-formalizar').disabled = true;
+
+        if (limparCampos) {
+          principalInput.value = '';
+          taxaInput.value = '';
+          document.getElementById('s-parcelas').value = '';
+          document.getElementById('s-tipo').value = 'COMPOSTO';
+        }
+
+        renderParcelasSimulacao([]);
+        document.getElementById('msg-simulacao').textContent = mensagem;
+      }
+        });
+      }
+
+      listaParcelasPagas.innerHTML = '';
+      if (!pagas.length) {
+        listaParcelasPagas.innerHTML = '<div class="notice">Nenhuma parcela paga.</div>';
+      } else {
+        pagas.forEach((parcela) => {
+          const item = document.createElement('div');
+          item.className = 'card parcela-item';
+          item.innerHTML = `
+            <div class="row">
+              <strong>Parcela ${parcela.numero}</strong>
+              <span class="pill">${formatMoney(parcela.valor)}</span>
+            </div>
+            <div class="muted">Vencimento: ${formatDateBr(parcela.vencimento)}</div>
+          `;
+          item.addEventListener('click', () => {
+            abrirOverviewParcela(parcela.numero);
+          });
+          listaParcelasPagas.appendChild(item);
+        });
+      }
+
+      if (parcelaOverviewSelecionada) {
+        const atualizada = parcelas.find((parcela) => Number(parcela.numero) === Number(parcelaOverviewSelecionada.numero));
+        parcelaOverviewSelecionada = atualizada || null;
+      }
+      atualizarOverviewParcela();
+    }
+
+    async function carregarParcelasInvestimento(investimentoId) {
+      try {
+        parcelasInvestimentoSelecionado = await fetchJson(`${API}/investimentos/${investimentoId}/parcelas`);
+        renderParcelasInvestimento(parcelasInvestimentoSelecionado);
+        atualizarVisibilidadeQuitarTotal();
+      } catch (_err) {
+        parcelasInvestimentoSelecionado = [];
+        parcelaOverviewSelecionada = null;
+        listaParcelasAbertas.innerHTML = '<div class="notice">Falha ao carregar parcelas em aberto.</div>';
+        listaParcelasPagas.innerHTML = '<div class="notice">Falha ao carregar parcelas pagas.</div>';
+        atualizarOverviewParcela();
+        atualizarVisibilidadeQuitarTotal();
+      }
+    }
+
+    function atualizarVisibilidadeQuitarTotal() {
+      const hasSelected = Boolean(investimentoSelecionado);
+      const saldo = Number(investimentoSelecionado?.saldo_devedor || 0);
+      const statusInvestimento = String(investimentoSelecionado?.status || '').trim().toUpperCase();
+      const naoQuitado = statusInvestimento !== 'QUITADO';
+      const temSaldo = Number.isFinite(saldo) && saldo > 0.009;
+      const parcelasAbertas = parcelasInvestimentoSelecionado.filter((parcela) => String(parcela.status || '').trim().toUpperCase() === 'PENDENTE');
+      const deveExibir = hasSelected && naoQuitado && temSaldo && parcelasAbertas.length > 0;
+
+      btnQuitarTotal.style.display = deveExibir ? 'inline-flex' : 'none';
+      btnQuitarTotal.disabled = !deveExibir;
+    }
+
+    async function selecionarInvestimento(id, abrirOverview = false) {
+      investimentoSelecionado = investimentosCache.find((item) => Number(item.id) === Number(id)) || null;
+
+      document.querySelectorAll('.invest-item').forEach((card) => {
+        card.classList.toggle('selected', Number(card.dataset.investimentoId) === Number(id));
+      });
+
+      const hasSelected = Boolean(investimentoSelecionado);
+
+      if (!hasSelected) {
+        detalhesInvestimento.textContent = 'Nenhum investimento selecionado.';
+        parcelasInvestimentoSelecionado = [];
+        parcelaOverviewSelecionada = null;
+        renderParcelasInvestimento([]);
+        atualizarVisibilidadeQuitarTotal();
+        return;
+      }
+
+      detalhesInvestimento.innerHTML = `
+        <div><strong>ID:</strong> ${investimentoSelecionado.id} | <strong>Cliente:</strong> ${investimentoSelecionado.cliente_nome || `#${investimentoSelecionado.cliente_id}`}</div>
+        <div><strong>CPF:</strong> ${formatCpfInput(investimentoSelecionado.cliente_cpf || '-')}</div>
+        <div><strong>Status:</strong> ${investimentoSelecionado.status} | <strong>Saldo:</strong> ${formatMoney(investimentoSelecionado.saldo_devedor)}</div>
+        <div><strong>Parcela:</strong> ${formatMoney(investimentoSelecionado.valor_parcela)} | <strong>Parcelas:</strong> ${investimentoSelecionado.quantidade_parcelas}</div>
+      `;
+
+      parcelasInvestimentoSelecionado = [];
+      parcelaOverviewSelecionada = null;
+      atualizarOverviewParcela();
+      atualizarVisibilidadeQuitarTotal();
+      await carregarParcelasInvestimento(investimentoSelecionado.id);
+
+      if (abrirOverview) {
+        abrirTab('investimento-overview');
+      }
+    }
+
+    function filtrarInvestimentos(lista, termo) {
+      const normalized = `${termo || ''}`.trim().toLowerCase();
+      if (!normalized) return lista;
+
+      return lista.filter((inv) => {
+        const idText = String(inv.id || '');
+        const clienteText = String(inv.cliente_nome || '').toLowerCase();
+        const cpfRaw = String(inv.cliente_cpf || '');
+        const cpfDigits = onlyDigits(cpfRaw);
+        const termoDigits = onlyDigits(normalized);
+        return idText.includes(normalized)
+          || clienteText.includes(normalized)
+          || cpfRaw.toLowerCase().includes(normalized)
+          || (termoDigits && cpfDigits.includes(termoDigits));
+      });
+    }
+
+    function renderListaInvestimentos(lista) {
+      const list = document.getElementById('lista-investimentos');
+      list.innerHTML = '';
+
+      if (!lista.length) {
+        investimentoSelecionado = null;
+        selecionarInvestimento(null);
+        list.innerHTML = '<div class="notice">Nenhum investimento encontrado.</div>';
+        return;
+      }
+
+      lista.forEach((inv) => {
+        const card = document.createElement('div');
+        card.className = 'card invest-item';
+        card.dataset.investimentoId = inv.id;
+        card.innerHTML = `
+          <div class="row">
+            <strong>Investimento ${inv.id}</strong>
+            <span class="pill">${inv.status}</span>
+          </div>
+          <div class="muted">Cliente ${inv.cliente_nome || `#${inv.cliente_id}`} | CPF ${formatCpfInput(inv.cliente_cpf || '-')}</div>
+          <div class="muted">Principal ${formatMoney(inv.valor_principal)}</div>
+          <div class="muted">Parcela ${formatMoney(inv.valor_parcela)} | Saldo ${formatMoney(inv.saldo_devedor)}</div>
+        `;
+        card.addEventListener('click', () => selecionarInvestimento(inv.id, true));
+        list.appendChild(card);
+      });
+
+      if (investimentoSelecionado) {
+        const existeNaLista = lista.some((inv) => Number(inv.id) === Number(investimentoSelecionado.id));
+        if (existeNaLista) {
+          selecionarInvestimento(investimentoSelecionado.id, false);
+          return;
+        }
+      }
+
+      selecionarInvestimento(lista[0].id, false);
+    }
+
+    function aplicarBuscaInvestimentos() {
+      const filtrados = filtrarInvestimentos(investimentosCache, termoBuscaInvestimentos);
+      renderListaInvestimentos(filtrados);
+
+      if (termoBuscaInvestimentos.trim()) {
+        msgInvestimentos.textContent = `Resultado da busca "${termoBuscaInvestimentos}": ${filtrados.length} investimento(s).`;
+      } else {
+        msgInvestimentos.textContent = `Investimentos carregados: ${investimentosCache.length} (ordem desc)`;
+      }
+    }
+
+    function renderInvestimentos(investimentos) {
+      investimentosCache = [...investimentos].sort((a, b) => Number(b.id) - Number(a.id));
+      aplicarBuscaInvestimentos();
+    }
+
+    async function carregarInvestimentosTodos() {
+      try {
+        const investimentos = await fetchJson(`${API}/investimentos`);
+        renderInvestimentos(investimentos);
+      } catch (err) {
+        document.getElementById('lista-investimentos').innerHTML = '<div class="notice">Falha ao listar investimentos.</div>';
+        msgInvestimentos.textContent = err.error || 'Erro ao carregar investimentos.';
+      }
+    }
+
+    function closeFormalizacaoDialog() {
+      dialog.classList.add('hidden');
+      dialog.setAttribute('aria-hidden', 'true');
+    }
+
+    function closeExcluirClienteDialog() {
+      dialogExcluirCliente.classList.add('hidden');
+      dialogExcluirCliente.setAttribute('aria-hidden', 'true');
+      clienteExclusaoPendente = null;
+      btnConfirmarExcluirCliente.disabled = false;
+    }
+
+    function closeExcluirEnderecoDialog() {
+      dialogExcluirEndereco.classList.add('hidden');
+      dialogExcluirEndereco.setAttribute('aria-hidden', 'true');
+      enderecoExclusaoPendente = null;
+      btnConfirmarExcluirEndereco.disabled = false;
+    }
+
+    function closePagamentoParcelaDialog() {
+      dialogPagamentoParcela.classList.add('hidden');
+      dialogPagamentoParcela.setAttribute('aria-hidden', 'true');
+      pagamentoParcelaPendente = null;
+      btnConfirmarPagamentoParcela.disabled = false;
+    }
+
+    function closeQuitarTotalDialog() {
+      dialogQuitarTotal.classList.add('hidden');
+      dialogQuitarTotal.setAttribute('aria-hidden', 'true');
+      quitacaoTotalPendente = null;
+      btnConfirmarQuitarTotal.disabled = false;
+    }
+
+    function closeProrrogacaoParcelaDialog() {
+      dialogProrrogacaoParcela.classList.add('hidden');
+      dialogProrrogacaoParcela.setAttribute('aria-hidden', 'true');
+      prorrogacaoParcelaPendente = null;
+      btnConfirmarProrrogacaoParcela.disabled = false;
+    }
+
+    function closeSalvarClienteDialog() {
+      dialogSalvarCliente.classList.add('hidden');
+      dialogSalvarCliente.setAttribute('aria-hidden', 'true');
+    }
+
+    function openSalvarClienteDialog(clienteNome, clienteSalvo, enderecoSalvo) {
+      salvarClienteDialogCliente.textContent = clienteNome || '-';
+      salvarClienteDialogEndereco.textContent = enderecoSalvo ? 'Novo endereco cadastrado' : 'Sem alteracao de endereco';
+      salvarClienteDialogBody.textContent = clienteSalvo && enderecoSalvo
+        ? 'Os dados do cliente e o endereco foram salvos com sucesso.'
+        : enderecoSalvo
+          ? 'Novo endereco cadastrado com sucesso.'
+          : 'Os dados do cliente foram salvos com sucesso.';
+      dialogSalvarCliente.classList.remove('hidden');
+      dialogSalvarCliente.setAttribute('aria-hidden', 'false');
+    }
+
+    function openExcluirClienteDialog(cliente) {
+      if (!cliente) return;
+      clienteExclusaoPendente = cliente;
+      excluirDialogCliente.textContent = `${cliente.nome} (#${cliente.id})`;
+      excluirDialogCpf.textContent = formatCpfInput(cliente.cpf || '-');
+      dialogExcluirCliente.classList.remove('hidden');
+      dialogExcluirCliente.setAttribute('aria-hidden', 'false');
+    }
+
+    function openExcluirEnderecoDialog(endereco) {
+      if (!endereco || !clienteSelecionado) return;
+
+      enderecoExclusaoPendente = {
+        id: Number(endereco.id),
+        clienteId: Number(clienteSelecionado.id),
+      };
+
+      excluirEnderecoDialogCliente.textContent = `${clienteSelecionado.nome} (#${clienteSelecionado.id})`;
+      excluirEnderecoDialogCep.textContent = String(endereco.cep || '-');
+      excluirEnderecoDialogEndereco.textContent = `${endereco.logradouro}, ${endereco.numero}`;
+      btnConfirmarExcluirEndereco.disabled = false;
+      dialogExcluirEndereco.classList.remove('hidden');
+      dialogExcluirEndereco.setAttribute('aria-hidden', 'false');
+    }
+
+    function openPagamentoParcelaDialog(parcela) {
+      if (!parcela) return;
+      pagamentoParcelaPendente = parcela;
+      pagamentoDialogNumero.textContent = `Parcela ${parcela.numero}`;
+      pagamentoDialogValor.textContent = formatMoney(parcela.valor);
+      pagamentoDialogVencimento.textContent = formatDateBr(parcela.vencimento);
+      dialogPagamentoParcela.classList.remove('hidden');
+      dialogPagamentoParcela.setAttribute('aria-hidden', 'false');
+    }
+
+    function openQuitarTotalDialog() {
+      if (!investimentoSelecionado) return;
+
+      const parcelasAbertas = parcelasInvestimentoSelecionado.filter((parcela) => parcela.status === 'PENDENTE');
+      if (!parcelasAbertas.length || Number(investimentoSelecionado.saldo_devedor || 0) <= 0) {
+        msgInvestimentos.textContent = 'Nao ha valores em aberto para quitacao total.';
+        return;
+      }
+
+      quitacaoTotalPendente = {
+        codigoInvestimento: Number(investimentoSelecionado.id),
+        valor: Number(investimentoSelecionado.saldo_devedor),
+      };
+
+      quitarTotalDialogInvestimento.textContent = `#${investimentoSelecionado.id}`;
+      quitarTotalDialogValor.textContent = formatMoney(quitacaoTotalPendente.valor);
+      quitarTotalDialogParcelas.textContent = String(parcelasAbertas.length);
+
+      dialogQuitarTotal.classList.remove('hidden');
+      dialogQuitarTotal.setAttribute('aria-hidden', 'false');
+    }
+
+    function openProrrogacaoParcelaDialog(parcela, diasProrrogados) {
+      if (!parcela || !investimentoSelecionado) return;
+
+      const dias = Number(diasProrrogados);
+      const novoValor = calcularNovoValorParcela(parcela.valor, dias, 0.02);
+      const novoVencimentoDate = addDaysToDate(parcela.vencimento, dias);
+
+      prorrogacaoParcelaPendente = {
+        codigoInvestimento: Number(investimentoSelecionado.id),
+        parcela_numero: Number(parcela.numero),
+        dias_prorrogados: dias,
+        valor_atual: Number(parcela.valor),
+        novo_valor: Number(novoValor),
+        vencimento_atual: parcela.vencimento,
+        novo_vencimento: novoVencimentoDate,
+      };
+
+      prorrogacaoDialogNumero.textContent = `Parcela ${parcela.numero}`;
+      prorrogacaoDialogValorAtual.textContent = formatMoney(parcela.valor);
+      prorrogacaoDialogNovoValor.textContent = formatMoney(novoValor);
+      prorrogacaoDialogVencimentoAtual.textContent = formatDateBr(parcela.vencimento);
+      prorrogacaoDialogNovoVencimento.textContent = formatDateBr(novoVencimentoDate);
+      prorrogacaoDialogDias.textContent = String(dias);
+
+      btnConfirmarProrrogacaoParcela.disabled = false;
+      dialogProrrogacaoParcela.classList.remove('hidden');
+      dialogProrrogacaoParcela.setAttribute('aria-hidden', 'false');
+    }
+
+    async function confirmarExcluirCliente() {
+      if (!clienteExclusaoPendente) return;
+      const cliente = clienteExclusaoPendente;
+
+      try {
+        btnConfirmarExcluirCliente.disabled = true;
+        await fetchJson(`${API}/clientes/${cliente.id}`, {
+          method: 'DELETE',
+        });
+
+        closeExcluirClienteDialog();
+        if (clienteSelecionado && Number(clienteSelecionado.id) === Number(cliente.id)) {
+          limparDetalheCliente();
+        }
+        await carregarClientes();
+        abrirTab('clientes-lista');
+        document.getElementById('msg-clientes').textContent = `Cliente ${cliente.nome} excluido com sucesso.`;
+      } catch (err) {
+        btnConfirmarExcluirCliente.disabled = false;
+        msgClienteDetalhe.textContent = err.error || 'Falha ao excluir cliente.';
+      }
+    }
+
+    async function confirmarExcluirEndereco() {
+      if (!enderecoExclusaoPendente) return;
+
+      try {
+        btnConfirmarExcluirEndereco.disabled = true;
+        await fetchJson(`${API}/clientes/${enderecoExclusaoPendente.clienteId}/enderecos/${enderecoExclusaoPendente.id}`, {
+          method: 'DELETE',
+        });
+
+        const enderecoId = enderecoExclusaoPendente.id;
+        const clienteId = enderecoExclusaoPendente.clienteId;
+        closeExcluirEnderecoDialog();
+        msgClienteDetalhe.textContent = `Endereco #${enderecoId} excluido com sucesso.`;
+        await carregarEnderecosCliente(clienteId);
+      } catch (err) {
+        btnConfirmarExcluirEndereco.disabled = false;
+        msgClienteDetalhe.textContent = err.error || 'Falha ao excluir endereco.';
+      }
+    }
+
+    async function confirmarPagamentoProximaParcela() {
+      if (!investimentoSelecionado || !pagamentoParcelaPendente) return;
+
+      try {
+        btnConfirmarPagamentoParcela.disabled = true;
+        await fetchJson(`${API}/investimentos/pagamentos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codigoInvestimento: Number(investimentoSelecionado.id),
+            valor: Number(pagamentoParcelaPendente.valor),
+            parcela_numero: Number(pagamentoParcelaPendente.numero),
+          }),
+        });
+
+        const parcelaPago = pagamentoParcelaPendente;
+        const parcelaNumero = Number(parcelaPago.numero);
+        const investimentoId = Number(investimentoSelecionado.id);
+        closePagamentoParcelaDialog();
+        msgInvestimentos.textContent = `Parcela ${parcelaPago.numero} registrada para investimento ${investimentoSelecionado.id}.`;
+        await carregarInvestimentosTodos();
+        await selecionarInvestimento(investimentoId, false);
+        abrirOverviewParcela(parcelaNumero);
+        await carregarDashboard();
+      } catch (err) {
+        btnConfirmarPagamentoParcela.disabled = false;
+        msgInvestimentos.textContent = err.error || 'Falha ao marcar parcela como paga.';
+      }
+    }
+
+    async function confirmarQuitarTotal() {
+      if (!investimentoSelecionado || !quitacaoTotalPendente) return;
+
+      try {
+        btnConfirmarQuitarTotal.disabled = true;
+        await fetchJson(`${API}/investimentos/pagamentos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codigoInvestimento: Number(quitacaoTotalPendente.codigoInvestimento),
+            valor: Number(quitacaoTotalPendente.valor),
+          }),
+        });
+
+        const investimentoId = Number(quitacaoTotalPendente.codigoInvestimento);
+        closeQuitarTotalDialog();
+        msgInvestimentos.textContent = `Investimento ${investimentoId} quitado com sucesso.`;
+        await carregarInvestimentosTodos();
+        await carregarDashboard();
+      } catch (err) {
+        btnConfirmarQuitarTotal.disabled = false;
+        msgInvestimentos.textContent = err.error || 'Falha ao quitar investimento.';
+      }
+    }
+
+    async function confirmarProrrogacaoParcela() {
+      if (!prorrogacaoParcelaPendente) {
+        msgInvestimentos.textContent = 'Dados de prorrogacao invalidos. Reabra o popup e tente novamente.';
+        return;
+      }
+
+      try {
+        btnConfirmarProrrogacaoParcela.disabled = true;
+        const numeroParcela = Number(prorrogacaoParcelaPendente.parcela_numero);
+        const codigoInvestimento = Number(prorrogacaoParcelaPendente.codigoInvestimento);
+
+        await fetchJson(`${API}/investimentos/parcelas/prorrogacoes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codigoInvestimento,
+            parcela_numero: numeroParcela,
+            dias_prorrogados: Number(prorrogacaoParcelaPendente.dias_prorrogados),
+            taxa_juros_dia: 0.02,
+          }),
+        });
+
+        closeProrrogacaoParcelaDialog();
+        prorrogacaoDiasParcelaOverviewInput.value = '';
+        msgInvestimentos.textContent = `Prorrogacao aplicada na parcela ${numeroParcela}.`;
+        await carregarInvestimentosTodos();
+        await selecionarInvestimento(codigoInvestimento, false);
+        abrirOverviewParcela(numeroParcela);
+        await carregarDashboard();
+      } catch (err) {
+        btnConfirmarProrrogacaoParcela.disabled = false;
+        msgInvestimentos.textContent = err.error || 'Falha ao aplicar prorrogacao da parcela.';
+      }
+    }
+
+    function openFormalizacaoDialog() {
+      if (!ultimaSimulacao) return;
+      const cliente = clientes.find((item) => String(item.id) === String(ultimaSimulacao.clienteId));
+      const payload = ultimaSimulacao.payload;
+      const resultado = ultimaSimulacao.resultado || {};
+      const primeiraParcela = Array.isArray(resultado.parcelas_detalhadas)
+        ? resultado.parcelas_detalhadas[0]
+        : null;
+      dialogCliente.textContent = cliente?.nome || `#${ultimaSimulacao.clienteId}`;
+      dialogPrincipal.textContent = formatMoney(payload.valor_principal);
+      dialogTaxa.textContent = `${(payload.taxa_juros * 100).toFixed(2).replace('.', ',')}%`;
+      dialogParcelas.textContent = `${payload.quantidade_parcelas}x`;
+      dialogValorParcela.textContent = Number.isFinite(Number(resultado.valor_parcela))
+        ? formatMoney(resultado.valor_parcela)
+        : '-';
+      dialogPrimeiroVencimento.textContent = formatDateBr(primeiraParcela?.data_vencimento);
+      dialog.classList.remove('hidden');
+      dialog.setAttribute('aria-hidden', 'false');
+    }
+
+    async function confirmarFormalizacao() {
+      if (!ultimaSimulacao) return;
+      try {
+        btnConfirmarFormalizacao.disabled = true;
+        const result = await fetchJson(`${API}/investimentos`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codicoCliente: Number(ultimaSimulacao.clienteId),
+            ...ultimaSimulacao.payload,
+          }),
+        });
+        const novoInvestimentoId = Number(result?.investimento?.id);
+        closeFormalizacaoDialog();
+        limparEstadoSimulacao({
+          mensagem: `Contrato formalizado. Investimento ${result.investimento.id}`,
+          limparCampos: true,
+        });
+        await carregarDashboard();
+
+        if (Number.isFinite(novoInvestimentoId) && novoInvestimentoId > 0) {
+          termoBuscaInvestimentos = String(novoInvestimentoId);
+          buscaInvestimentosInput.value = termoBuscaInvestimentos;
+          await carregarInvestimentosTodos();
+          selecionarInvestimento(novoInvestimentoId, true);
+          msgInvestimentos.textContent = `Investimento ${novoInvestimentoId} formalizado e aberto no overview.`;
+        }
+      } catch (err) {
+        document.getElementById('msg-simulacao').textContent = err.error || 'Falha ao formalizar.';
+      } finally {
+        btnConfirmarFormalizacao.disabled = false;
+      }
+    }
+
+    async function fetchJson(url, options) {
+      const res = await fetch(url, options);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw data;
+      return data;
+    }
+
+    async function carregarDashboard() {
+      try {
+        const resumo = await fetchJson(`${API}/dashboard/resumo`);
+        document.getElementById('kpi-investido').textContent = formatMoney(resumo.total_investido);
+        document.getElementById('kpi-aberto').textContent = formatMoney(resumo.total_em_aberto);
+        document.getElementById('kpi-vencido').textContent = formatMoney(resumo.total_vencido);
+        document.getElementById('kpi-lucro').textContent = formatMoney(resumo.lucro_real);
+        document.getElementById('kpi-clientes-atraso').textContent = String(Number(resumo.clientes_em_atraso || 0));
+      } catch (err) {
+        if (msgCadastro) msgCadastro.textContent = 'Falha ao carregar dashboard.';
+      }
+    }
+
+    function preencherDashboardCompleto(data = {}) {
+      document.getElementById('dc-valor-investido').textContent = formatMoney(data.total_investido);
+      document.getElementById('dc-lucro-total').textContent = formatMoney(data.lucro_total);
+      document.getElementById('dc-lucro-recebido').textContent = formatMoney(data.lucro_recebido);
+      document.getElementById('dc-lucro-a-receber').textContent = formatMoney(data.lucro_a_receber);
+      document.getElementById('dc-total-clientes').textContent = String(Number(data.total_clientes || 0));
+      document.getElementById('dc-receita-bruta').textContent = formatMoney(data.receita_bruta);
+      document.getElementById('dc-receita-liquida').textContent = formatMoney(data.receita_liquida);
+
+      listaDashboardClientesMes.innerHTML = '';
+      const volume = Array.isArray(data.volume_clientes_mes) ? data.volume_clientes_mes : [];
+      if (!volume.length) {
+        listaDashboardClientesMes.innerHTML = '<div class="notice">Sem dados de clientes por mes.</div>';
+        return;
+      }
+
+      volume.forEach((item) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="row">
+            <strong>${formatReferenciaMes(item.referencia)}</strong>
+            <span class="pill">${Number(item.quantidade || 0)} clientes</span>
+          </div>
+        `;
+        listaDashboardClientesMes.appendChild(card);
+      });
+    }
+
+    async function carregarDashboardCompleto() {
+      if (!msgDashboardCompleto) return;
+
+      try {
+        msgDashboardCompleto.textContent = 'Carregando dashboard completo...';
+        if (btnCarregarDashboardCompleto) {
+          btnCarregarDashboardCompleto.disabled = true;
+        }
+
+        const dashboardCompleto = await fetchJson(`${API}/dashboard/completo`);
+        preencherDashboardCompleto(dashboardCompleto);
+        msgDashboardCompleto.textContent = 'Dashboard completo atualizado com sucesso.';
+      } catch (err) {
+        msgDashboardCompleto.textContent = err.error || 'Falha ao carregar dashboard completo.';
+      } finally {
+        if (btnCarregarDashboardCompleto) {
+          btnCarregarDashboardCompleto.disabled = false;
+        }
+      }
+    }
+
+    function preencherSelects(clientesLista = clientes) {
+      const selects = [document.getElementById('s-cliente')];
+      selects.forEach((sel) => {
+        if (!sel) return;
+        sel.innerHTML = '';
+        clientesLista.forEach((c) => {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.textContent = `${c.id} - ${c.nome} (renda ${formatMoney(c.renda_mensal)})`;
+          sel.appendChild(opt);
+        });
+
+        if (!clientesLista.length) {
+          const opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = 'Nenhum cliente encontrado';
+          opt.disabled = true;
+          opt.selected = true;
+          sel.appendChild(opt);
+        }
+      });
+    }
+
+    function aplicarBuscaSimulacaoClientes() {
+      const filtrados = filtrarClientes(clientes, termoBuscaSimulacao);
+      preencherSelects(filtrados);
+
+      if (termoBuscaSimulacao.trim()) {
+        document.getElementById('msg-simulacao').textContent = `Clientes encontrados para simulacao: ${filtrados.length}`;
+      }
+    }
+
+    function filtrarClientes(lista, termo) {
+      const normalized = `${termo || ''}`.trim().toLowerCase();
+      if (!normalized) return lista;
+
+      return lista.filter((cliente) => {
+        const nome = String(cliente.nome || '').toLowerCase();
+        const email = String(cliente.email || '').toLowerCase();
+        const cpfRaw = String(cliente.cpf || '');
+        const cpfDigits = onlyDigits(cpfRaw);
+        const termoDigits = onlyDigits(normalized);
+        return nome.includes(normalized)
+          || email.includes(normalized)
+          || cpfRaw.toLowerCase().includes(normalized)
+          || (termoDigits && cpfDigits.includes(termoDigits));
+      });
+    }
+
+    function renderParcelasSimulacao(parcelas = []) {
+      listaParcelasSimulacao.innerHTML = '';
+
+      if (!Array.isArray(parcelas) || !parcelas.length) {
+        listaParcelasSimulacao.innerHTML = '<div class="notice">Sem lista de parcelas para exibir.</div>';
+        return;
+      }
+
+      const titulo = document.createElement('h3');
+      titulo.style.margin = '6px 0 4px 0';
+      titulo.style.color = 'var(--accent-2)';
+      titulo.textContent = 'Lista de parcelas da simulacao';
+      listaParcelasSimulacao.appendChild(titulo);
+
+      parcelas.forEach((parcela) => {
+        const item = document.createElement('div');
+        item.className = 'card';
+        item.innerHTML = `
+          <div class="row">
+            <strong>Parcela ${parcela.numero}</strong>
+            <span class="pill">${formatMoney(parcela.valor_parcela)}</span>
+          </div>
+          <div class="muted">Vencimento: ${formatDateTimeBr(parcela.data_vencimento)}</div>
+        `;
+        listaParcelasSimulacao.appendChild(item);
+      });
+    }
+
+    function renderClientes() {
+      const list = document.getElementById('lista-clientes');
+      list.innerHTML = '';
+
+      const filtrados = filtrarClientes(clientes, termoBuscaClientes);
+
+      if (!filtrados.length) {
+        if (!clientes.length) {
+          list.innerHTML = '<div class="notice">Clique em "Recarregar lista" para carregar clientes.</div>';
+        } else {
+          list.innerHTML = '<div class="notice">Nenhum cliente encontrado para a busca informada.</div>';
+        }
+        return;
+      }
+
+      filtrados.forEach((c) => {
+        const card = document.createElement('div');
+        card.className = 'card cliente-item';
+        card.dataset.clienteId = c.id;
+        card.innerHTML = `
+          <div class="row">
+            <strong>${c.nome}</strong>
+            <span class="pill">${c.tipo_trabalho}</span>
+          </div>
+          <div class="muted">Email ${c.email || '-'} | CPF ${c.cpf} | Renda ${formatMoney(c.renda_mensal)}</div>
+          <div class="row">
+            <button class="ghost btn-excluir-cliente-lista" type="button">Excluir cliente</button>
+          </div>
+        `;
+        card.addEventListener('click', () => selecionarCliente(c.id));
+        const btnExcluirCard = card.querySelector('.btn-excluir-cliente-lista');
+        btnExcluirCard.addEventListener('click', (event) => {
+          event.stopPropagation();
+          openExcluirClienteDialog(c);
+        });
+        list.appendChild(card);
+      });
+
+      if (clienteSelecionado) {
+        const existe = filtrados.some((item) => Number(item.id) === Number(clienteSelecionado.id));
+        if (existe) {
+          document.querySelectorAll('.cliente-item').forEach((card) => {
+            card.classList.toggle('selected', Number(card.dataset.clienteId) === Number(clienteSelecionado.id));
+          });
+        } else {
+          limparDetalheCliente();
+        }
+      }
+
+      if (termoBuscaClientes.trim()) {
+        document.getElementById('msg-clientes').textContent = `Resultado da busca "${termoBuscaClientes}": ${filtrados.length} cliente(s).`;
+      }
+    }
+
+    async function carregarClientes() {
+      try {
+        clientes = await fetchJson(`${API}/clientes`);
+        aplicarBuscaSimulacaoClientes();
+        renderClientes();
+        document.getElementById('msg-clientes').textContent = `Clientes carregados: ${clientes.length}`;
+      } catch (err) {
+        document.getElementById('msg-clientes').textContent = 'Erro ao carregar clientes.';
+      }
+    }
+
+    document.getElementById('btn-criar-cliente').addEventListener('click', async () => {
+      const emailNormalizado = normalizarEmail(document.getElementById('c-email').value);
+      if (!validarEmail(emailNormalizado)) {
+        if (msgCadastro) msgCadastro.textContent = 'Informe um email valido no formato nome@dominio.com.';
+        return;
+      }
+
+      const payload = {
+        nome: document.getElementById('c-nome').value.trim(),
+        email: emailNormalizado,
+        cpf: onlyDigits(document.getElementById('c-cpf').value.trim()),
+        rg: onlyDigits(document.getElementById('c-rg').value.trim()),
+        renda_mensal: parseCurrency(document.getElementById('c-renda').value),
+        tipo_trabalho: document.getElementById('c-trabalho').value.trim(),
+      };
+
+      try {
+        const cliente = await fetchJson(`${API}/clientes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        if (msgCadastro) {
+          msgCadastro.textContent = `Cliente criado com sucesso: ${cliente.nome}. Redirecionando para lista...`;
+        }
+        await carregarClientes();
+        abrirTab('clientes-lista');
+        document.getElementById('msg-clientes').textContent = `Cliente criado: ${cliente.nome}`;
+      } catch (err) {
+        if (msgCadastro) {
+          msgCadastro.textContent = err.error || 'Falha ao criar cliente.';
+        }
+      }
+    });
+
+    document.getElementById('btn-recarregar').addEventListener('click', carregarClientes);
+
+    document.getElementById('btn-ir-cadastro-cliente').addEventListener('click', () => {
+      abrirTab('clientes');
+      const campoNomeCadastro = document.getElementById('c-nome');
+      if (campoNomeCadastro) campoNomeCadastro.focus();
+    });
+
+    btnSalvarCliente.addEventListener('click', async () => {
+      if (!clienteSelecionado) {
+        msgClienteDetalhe.textContent = 'Selecione um cliente para salvar os dados.';
+        return;
+      }
+
+      const emailNormalizado = normalizarEmail(detalheEmailInput.value);
+      if (!validarEmail(emailNormalizado)) {
+        msgClienteDetalhe.textContent = 'Informe um email valido no formato nome@dominio.com.';
+        return;
+      }
+
+      const payload = {
+        nome: detalheNomeInput.value.trim(),
+        email: emailNormalizado,
+        cpf: onlyDigits(detalheCpfInput.value.trim()),
+        rg: onlyDigits(detalheRgInput.value.trim()),
+        renda_mensal: parseCurrency(detalheRendaInput.value),
+        tipo_trabalho: detalheTrabalhoInput.value.trim(),
+      };
+
+      if (!payload.nome || !payload.cpf || !payload.rg || payload.renda_mensal <= 0 || !payload.tipo_trabalho) {
+        msgClienteDetalhe.textContent = 'Preencha os dados obrigatorios antes de salvar.';
+        return;
+      }
+
+      const enderecoPayload = {
+        cep: normalizarCep(document.getElementById('e-cep').value.trim()),
+        logradouro: document.getElementById('e-logradouro').value.trim(),
+        numero: document.getElementById('e-numero').value.trim(),
+        complemento: document.getElementById('e-complemento').value.trim(),
+        bairro: document.getElementById('e-bairro').value.trim(),
+        cidade: document.getElementById('e-cidade').value.trim(),
+        estado: document.getElementById('e-estado').value.trim().toUpperCase(),
+        tipo: document.getElementById('e-tipo').value,
+      };
+
+      const enderecoObrigatorios = [
+        enderecoPayload.cep,
+        enderecoPayload.logradouro,
+        enderecoPayload.numero,
+        enderecoPayload.bairro,
+        enderecoPayload.cidade,
+        enderecoPayload.estado,
+        enderecoPayload.tipo,
+      ];
+      const camposEnderecoDigitaveis = [
+        enderecoPayload.cep,
+        enderecoPayload.logradouro,
+        enderecoPayload.numero,
+        enderecoPayload.complemento,
+        enderecoPayload.bairro,
+        enderecoPayload.cidade,
+        enderecoPayload.estado,
+      ];
+      const temAlgumDadoEndereco = camposEnderecoDigitaveis.some((campo) => String(campo || '').trim() !== '');
+      const enderecoCompleto = enderecoObrigatorios.every((campo) => String(campo || '').trim() !== '');
+
+      if (temAlgumDadoEndereco && !enderecoCompleto) {
+        msgClienteDetalhe.textContent = 'Preencha todos os campos obrigatorios do endereco para cadastrar um novo, ou deixe o formulario de endereco em branco.';
+        return;
+      }
+
+      const nomeAtual = String(clienteSelecionado.nome || '').trim();
+      const emailAtual = normalizarEmail(clienteSelecionado.email || '');
+      const cpfAtual = onlyDigits(clienteSelecionado.cpf || '');
+      const rgAtual = onlyDigits(clienteSelecionado.rg || '');
+      const rendaAtual = Number(clienteSelecionado.renda_mensal || 0);
+      const tipoTrabalhoAtual = String(clienteSelecionado.tipo_trabalho || '').trim();
+
+      const dadosClienteSemAlteracao = payload.nome === nomeAtual
+        && payload.email === emailAtual
+        && payload.cpf === cpfAtual
+        && payload.rg === rgAtual
+        && Math.abs(Number(payload.renda_mensal) - rendaAtual) < 0.005
+        && payload.tipo_trabalho === tipoTrabalhoAtual;
+
+      const deveCadastrarEndereco = temAlgumDadoEndereco && enderecoCompleto;
+
+      if (dadosClienteSemAlteracao && !deveCadastrarEndereco) {
+        msgClienteDetalhe.textContent = 'Nenhuma alteracao detectada nos dados do cliente.';
+        return;
+      }
+
+      try {
+        btnSalvarCliente.disabled = true;
+        let clienteAtualizado = clienteSelecionado;
+        let clienteSalvo = false;
+        let enderecoSalvo = false;
+
+        if (!dadosClienteSemAlteracao) {
+          clienteAtualizado = await fetchJson(`${API}/clientes/${clienteSelecionado.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+          });
+          clienteSalvo = true;
+        }
+
+        if (deveCadastrarEndereco) {
+          await fetchJson(`${API}/clientes/${clienteSelecionado.id}/enderecos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(enderecoPayload),
+          });
+
+          document.getElementById('e-cep').value = '';
+          document.getElementById('e-logradouro').value = '';
+          document.getElementById('e-numero').value = '';
+          document.getElementById('e-complemento').value = '';
+          document.getElementById('e-bairro').value = '';
+          document.getElementById('e-cidade').value = '';
+          document.getElementById('e-estado').value = '';
+          document.getElementById('e-tipo').value = 'RESIDENCIAL';
+          enderecoSalvo = true;
+        }
+
+        msgClienteDetalhe.textContent = clienteSalvo && enderecoSalvo
+          ? `Dados do cliente ${clienteAtualizado.nome} atualizados e endereco cadastrado com sucesso.`
+          : enderecoSalvo
+            ? `Endereco cadastrado com sucesso para cliente ${clienteAtualizado.nome}.`
+            : `Dados do cliente ${clienteAtualizado.nome} atualizados com sucesso.`;
+        openSalvarClienteDialog(clienteAtualizado.nome, clienteSalvo, enderecoSalvo);
+        await carregarClientes();
+        await selecionarCliente(clienteAtualizado.id);
+      } catch (err) {
+        msgClienteDetalhe.textContent = err.error || 'Falha ao salvar dados do cliente e endereco.';
+      } finally {
+        btnSalvarCliente.disabled = false;
+      }
+    });
+
+    buscaClientesInput.addEventListener('input', (event) => {
+      termoBuscaClientes = event.target.value;
+      renderClientes();
+    });
+
+    buscaClienteSimulacaoInput.addEventListener('input', async (event) => {
+      termoBuscaSimulacao = event.target.value;
+      if (!clientes.length) {
+        await carregarClientes();
+        return;
+      }
+      aplicarBuscaSimulacaoClientes();
+    });
+
+    document.getElementById('btn-simular').addEventListener('click', async () => {
+      const clienteId = document.getElementById('s-cliente').value;
+      if (!clienteId) {
+        document.getElementById('msg-simulacao').textContent = 'Selecione um cliente valido para simular.';
+        return;
+      }
+      const payload = {
+        valor_principal: parseCurrency(document.getElementById('s-principal').value),
+        taxa_juros: parsePercent(document.getElementById('s-taxa').value),
+        quantidade_parcelas: Number(document.getElementById('s-parcelas').value),
+        tipo_juros: document.getElementById('s-tipo').value,
+      };
+
+      try {
+        const sim = await fetchJson(`${API}/simulacoes`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            codicoCliente: Number(clienteId),
+            ...payload,
+          }),
+        });
+        ultimaSimulacao = { clienteId, payload, resultado: sim };
+        document.getElementById('btn-formalizar').disabled = false;
+        document.getElementById('msg-simulacao').textContent = `OK: total ${formatMoney(sim.valor_total)} | parcela ${formatMoney(sim.valor_parcela)} | risco ${sim.risco} | data ${formatDateBr(sim.data_simulacao)}`;
+        renderParcelasSimulacao(sim.parcelas_detalhadas || []);
+      } catch (err) {
+        limparEstadoSimulacao({
+          mensagem: err.error || 'Falha na simulacao.',
+          limparCampos: false,
+        });
+      }
+    });
+
+    document.getElementById('btn-formalizar').addEventListener('click', () => {
+      if (!ultimaSimulacao) return;
+      openFormalizacaoDialog();
+    });
+
+    btnCancelarFormalizacao.addEventListener('click', closeFormalizacaoDialog);
+    btnConfirmarFormalizacao.addEventListener('click', confirmarFormalizacao);
+    btnCancelarExcluirCliente.addEventListener('click', closeExcluirClienteDialog);
+    btnConfirmarExcluirCliente.addEventListener('click', confirmarExcluirCliente);
+    btnCancelarExcluirEndereco.addEventListener('click', closeExcluirEnderecoDialog);
+    btnConfirmarExcluirEndereco.addEventListener('click', confirmarExcluirEndereco);
+    btnCancelarPagamentoParcela.addEventListener('click', closePagamentoParcelaDialog);
+    btnConfirmarPagamentoParcela.addEventListener('click', confirmarPagamentoProximaParcela);
+    btnCancelarQuitarTotal.addEventListener('click', closeQuitarTotalDialog);
+    btnConfirmarQuitarTotal.addEventListener('click', confirmarQuitarTotal);
+    btnCancelarProrrogacaoParcela.addEventListener('click', closeProrrogacaoParcelaDialog);
+    btnConfirmarProrrogacaoParcela.addEventListener('click', confirmarProrrogacaoParcela);
+    btnFecharSalvarCliente.addEventListener('click', closeSalvarClienteDialog);
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) {
+        closeFormalizacaoDialog();
+      }
+    });
+
+    dialogExcluirCliente.addEventListener('click', (event) => {
+      if (event.target === dialogExcluirCliente) {
+        closeExcluirClienteDialog();
+      }
+    });
+
+    dialogExcluirEndereco.addEventListener('click', (event) => {
+      if (event.target === dialogExcluirEndereco) {
+        closeExcluirEnderecoDialog();
+      }
+    });
+
+    dialogPagamentoParcela.addEventListener('click', (event) => {
+      if (event.target === dialogPagamentoParcela) {
+        closePagamentoParcelaDialog();
+      }
+    });
+
+    dialogQuitarTotal.addEventListener('click', (event) => {
+      if (event.target === dialogQuitarTotal) {
+        closeQuitarTotalDialog();
+      }
+    });
+
+    dialogProrrogacaoParcela.addEventListener('click', (event) => {
+      if (event.target === dialogProrrogacaoParcela) {
+        closeProrrogacaoParcelaDialog();
+      }
+    });
+
+    dialogSalvarCliente.addEventListener('click', (event) => {
+      if (event.target === dialogSalvarCliente) {
+        closeSalvarClienteDialog();
+      }
+    });
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !dialog.classList.contains('hidden')) {
+        closeFormalizacaoDialog();
+      }
+      if (event.key === 'Escape' && !dialogExcluirCliente.classList.contains('hidden')) {
+        closeExcluirClienteDialog();
+      }
+      if (event.key === 'Escape' && !dialogExcluirEndereco.classList.contains('hidden')) {
+        closeExcluirEnderecoDialog();
+      }
+      if (event.key === 'Escape' && !dialogPagamentoParcela.classList.contains('hidden')) {
+        closePagamentoParcelaDialog();
+      }
+      if (event.key === 'Escape' && !dialogQuitarTotal.classList.contains('hidden')) {
+        closeQuitarTotalDialog();
+      }
+      if (event.key === 'Escape' && !dialogProrrogacaoParcela.classList.contains('hidden')) {
+        closeProrrogacaoParcelaDialog();
+      }
+      if (event.key === 'Escape' && !dialogSalvarCliente.classList.contains('hidden')) {
+        closeSalvarClienteDialog();
+      }
+    });
+
+    buscaInvestimentosInput.addEventListener('input', (event) => {
+      termoBuscaInvestimentos = event.target.value;
+      aplicarBuscaInvestimentos();
+    });
+
+    btnCarregarDashboardCompleto.addEventListener('click', () => {
+      carregarDashboardCompleto();
+    });
+
+    btnVoltarListaInvestimentos.addEventListener('click', () => {
+      abrirTab('investimentos');
+    });
+
+    btnVoltarInvestimentoOverview.addEventListener('click', () => {
+      abrirTab('investimento-overview');
+    });
+
+    btnQuitarTotal.addEventListener('click', async () => {
+      if (!investimentoSelecionado) return;
+      openQuitarTotalDialog();
+    });
+
+    btnQuitarParcelaOverview.addEventListener('click', async () => {
+      if (!investimentoSelecionado || !parcelaOverviewSelecionada) return;
+
+      const statusParcela = String(parcelaOverviewSelecionada.status || '').trim().toUpperCase();
+      if (statusParcela !== 'PENDENTE') {
+        msgParcelaOverview.textContent = 'A parcela selecionada nao esta pendente para quitacao.';
+        return;
+      }
+
+      const proximaParcelaAberta = obterProximaParcelaPendente();
+      if (!proximaParcelaAberta || Number(proximaParcelaAberta.numero) !== Number(parcelaOverviewSelecionada.numero)) {
+        msgParcelaOverview.textContent = 'Somente a proxima parcela pendente pode ser quitada.';
+        return;
+      }
+
+      openPagamentoParcelaDialog(parcelaOverviewSelecionada);
+    });
+
+    btnProrrogarParcelaOverview.addEventListener('click', async () => {
+      if (!investimentoSelecionado || !parcelaOverviewSelecionada) return;
+
+      const statusParcela = String(parcelaOverviewSelecionada.status || '').trim().toUpperCase();
+      if (statusParcela !== 'PENDENTE') {
+        msgParcelaOverview.textContent = 'A parcela selecionada nao esta pendente para prorrogacao.';
+        return;
+      }
+
+      const diasRestantes = diasAteVencimento(parcelaOverviewSelecionada.vencimento);
+      if (diasRestantes == null) {
+        msgParcelaOverview.textContent = 'Nao foi possivel validar a data de vencimento da parcela.';
+        return;
+      }
+
+      if (diasRestantes >= 20) {
+        msgParcelaOverview.textContent = `Prorrogacao bloqueada: faltam ${diasRestantes} dias para o vencimento. A regra permite apenas com menos de 20 dias.`;
+        return;
+      }
+
+      const dias = Number(prorrogacaoDiasParcelaOverviewInput.value);
+      if (!Number.isFinite(dias) || dias <= 0) {
+        msgParcelaOverview.textContent = 'Informe a quantidade de dias para prorrogacao.';
+        return;
+      }
+
+      openProrrogacaoParcelaDialog(parcelaOverviewSelecionada, dias);
+    });
+
+    document.getElementById('msg-clientes').textContent = 'Ao entrar nesta tela, a lista e carregada automaticamente.';
+    document.getElementById('msg-investimentos').textContent = 'Lista carregada automaticamente. Selecione um investimento para abrir o overview.';
+    atualizarVisibilidadeQuitarTotal();
+    renderParcelasSimulacao([]);
+    carregarDashboard();
+  </script>
+</body>
+</html>
