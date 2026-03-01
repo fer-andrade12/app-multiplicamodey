@@ -7,11 +7,14 @@ require('dotenv').config();
 const { pool } = require('./repositories/db');
 
 const healthController = require('./controllers/healthController');
+const authController = require('./controllers/authController');
 const clientesController = require('./controllers/clientesController');
 const investimentosController = require('./controllers/investimentosController');
 const calculadoraController = require('./controllers/calculadoraController');
 const dashboardController = require('./controllers/dashboardController');
 const simulacaoController = require('./controllers/simulacaoController');
+const authService = require('./services/authService');
+const { requireAuth, requireRole } = require('./middlewares/authMiddleware');
 
 const app = express();
 app.use(cors());
@@ -619,12 +622,13 @@ const swaggerDocument = {
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', healthController);
-app.use('/clientes', clientesController);
-app.use('/simulacoes', simulacaoController);
-app.use('/clientes/:codigoCliente/investimentos', investimentosController.byCliente);
-app.use('/investimentos', investimentosController.investimentoCrud);
-app.use('/calculadora', calculadoraController);
-app.use('/dashboard', dashboardController);
+app.use('/auth', authController);
+app.use('/clientes', requireAuth, requireRole('ADMIN'), clientesController);
+app.use('/simulacoes', requireAuth, requireRole('ADMIN'), simulacaoController);
+app.use('/clientes/:codigoCliente/investimentos', requireAuth, investimentosController.byCliente);
+app.use('/investimentos', requireAuth, investimentosController.investimentoCrud);
+app.use('/calculadora', requireAuth, requireRole('ADMIN'), calculadoraController);
+app.use('/dashboard', requireAuth, dashboardController);
 
 const port = Number(process.env.PORT || 8080);
 
@@ -636,7 +640,8 @@ async function inicializarSchema() {
 
 if (process.env.SKIP_LISTEN !== '1') {
   inicializarSchema()
-    .then(() => {
+    .then(async () => {
+      await authService.ensureAdminPrincipal();
       app.listen(port, () => {
         console.log(`Express API listening on http://localhost:${port}`);
       });

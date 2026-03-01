@@ -16,6 +16,14 @@
       --text: #f5f3ff;
       --muted: #c4b5fd;
       --border: #2a1f47;
+      --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
+      --duration-fast: 160ms;
+      --duration-base: 240ms;
+    }
+
+    html {
+      scrollbar-gutter: stable;
+      overflow-y: scroll;
     }
 
     * { box-sizing: border-box; }
@@ -26,6 +34,9 @@
       background: radial-gradient(1200px 600px at 10% 10%, #1b1438, #0b0b16 60%);
       color: var(--text);
       padding: 24px;
+      scroll-behavior: smooth;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
     }
 
     .bg-orb {
@@ -78,6 +89,11 @@
       border-radius: 14px;
       padding: 16px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+      transition:
+        transform var(--duration-base) var(--ease-standard),
+        box-shadow var(--duration-base) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard),
+        background-color var(--duration-base) var(--ease-standard);
     }
 
     .card h2 {
@@ -107,19 +123,35 @@
       padding: 8px 14px;
       border-radius: 999px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        background-color var(--duration-base) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard),
+        color var(--duration-base) var(--ease-standard),
+        box-shadow var(--duration-base) var(--ease-standard);
       font-family: "Space Grotesk", sans-serif;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(168,85,247,0.6);
+    }
+
+    .tab-btn:active {
+      transform: translateY(0);
     }
 
     .tab-btn.active {
       background: linear-gradient(135deg, var(--accent), var(--accent-2));
       color: #fff;
       border-color: transparent;
+      box-shadow: 0 10px 24px rgba(124,58,237,0.28);
     }
 
     .tab {
       display: none;
-      animation: fadeIn 0.4s ease;
+      animation: fadeIn var(--duration-base) var(--ease-standard);
+      will-change: transform, opacity;
     }
 
     .tab.active { display: block; }
@@ -166,6 +198,17 @@
       border: 1px solid var(--border);
       background: #120c24;
       color: var(--text);
+      transition:
+        border-color var(--duration-base) var(--ease-standard),
+        box-shadow var(--duration-base) var(--ease-standard),
+        transform var(--duration-fast) var(--ease-standard);
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: rgba(168,85,247,0.8);
+      box-shadow: 0 0 0 3px rgba(168,85,247,0.2);
     }
 
     button.primary {
@@ -176,6 +219,10 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: 600;
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        filter var(--duration-base) var(--ease-standard),
+        box-shadow var(--duration-base) var(--ease-standard);
     }
 
     button.ghost {
@@ -185,6 +232,28 @@
       padding: 10px 16px;
       border-radius: 10px;
       cursor: pointer;
+      transition:
+        transform var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-base) var(--ease-standard),
+        color var(--duration-base) var(--ease-standard),
+        background-color var(--duration-base) var(--ease-standard);
+    }
+
+    button.primary:hover,
+    button.ghost:hover {
+      transform: translateY(-1px);
+    }
+
+    button.primary:active,
+    button.ghost:active {
+      transform: translateY(0);
+    }
+
+    button.primary:disabled,
+    button.ghost:disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      transform: none;
     }
 
     .row {
@@ -202,6 +271,65 @@
       background: rgba(124,58,237,0.1);
       border: 1px solid rgba(124,58,237,0.3);
       color: var(--muted);
+      transition:
+        border-color var(--duration-base) var(--ease-standard),
+        background-color var(--duration-base) var(--ease-standard),
+        color var(--duration-base) var(--ease-standard);
+    }
+
+    .is-hidden {
+      display: none !important;
+    }
+
+    .auth-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 1200;
+      background: radial-gradient(1100px 520px at 50% -10%, rgba(124,58,237,0.2), rgba(0,0,0,0) 55%), #000;
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 520px;
+      background: linear-gradient(180deg, rgba(19, 14, 36, 0.96) 0%, rgba(12, 10, 24, 0.98) 100%);
+      border: 1px solid rgba(168, 85, 247, 0.42);
+      border-radius: 20px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.7);
+      padding: 24px;
+      animation: fadeIn 0.2s ease-out;
+    }
+
+    .auth-title {
+      margin: 0;
+      color: #f5f3ff;
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .auth-subtitle {
+      margin: 10px 0 0 0;
+      color: #e3d8ff;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .auth-card .notice {
+      background: rgba(124,58,237,0.14);
+      border-color: rgba(168,85,247,0.42);
+      color: #e9ddff;
+    }
+
+    .auth-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 12px;
     }
 
     .list {
@@ -603,6 +731,15 @@
       from { opacity: 0; transform: translateY(6px); }
       to { opacity: 1; transform: translateY(0); }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 1ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -611,8 +748,32 @@
     <div>
       <h1>MultiplicaMoney</h1>
     </div>
-    <div class="badge">API ativa em 8080</div>
+    <div class="auth-actions">
+      <div id="auth-status-badge" class="badge">Nao autenticado</div>
+      <button id="btn-logout" class="ghost is-hidden" type="button">Sair</button>
+    </div>
   </header>
+
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-card">
+      <h2 class="auth-title">Entrar no MultiplicaMoney</h2>
+      <p class="auth-subtitle">Use email e senha para acessar. O perfil define quais dados ficam disponiveis.</p>
+      <div class="form-grid" style="margin-top: 14px;">
+        <div>
+          <label>Email</label>
+          <input id="login-email" type="email" placeholder="admin@multiplicamoney.local" autocomplete="username" />
+        </div>
+        <div>
+          <label>Senha</label>
+          <input id="login-senha" type="password" placeholder="Digite sua senha" autocomplete="current-password" />
+        </div>
+      </div>
+      <div class="row">
+        <button id="btn-login" class="primary" type="button">Entrar</button>
+      </div>
+      <div id="msg-login" class="notice">Informe suas credenciais para continuar.</div>
+    </div>
+  </div>
 
   <div id="kpi-grid" class="grid">
     <div class="card">
@@ -648,6 +809,7 @@
     <button class="tab-btn" data-tab="simulacao">Simulacao</button>
     <button class="tab-btn" data-tab="investimentos">Investimentos</button>
     <button class="tab-btn" data-tab="dashboard-completo">Dashboard completo</button>
+    <button class="tab-btn" data-tab="usuarios-admin">Usuarios</button>
   </div>
 
   <section id="tab-clientes" class="tab active card">
@@ -693,6 +855,9 @@
     <div class="row">
       <button id="btn-ir-cadastro-cliente" class="primary">Cadastrar cliente</button>
       <input id="c-busca" type="text" placeholder="Buscar cliente por nome, CPF ou email" style="max-width: 420px;" />
+      <button id="btn-c-pagina-anterior" class="ghost" type="button">Anterior</button>
+      <span id="c-paginacao-info" class="muted">Pagina 1 de 1</span>
+      <button id="btn-c-pagina-proxima" class="ghost" type="button">Proxima</button>
     </div>
     <div id="msg-clientes" class="notice">A lista de clientes e carregada automaticamente.</div>
     <div id="lista-clientes" class="list"></div>
@@ -808,6 +973,9 @@
     <h2>Lista de investimentos</h2>
     <div class="row">
       <input id="i-busca" type="text" placeholder="Buscar por codigo, nome do cliente ou CPF" style="max-width: 420px;" />
+      <button id="btn-i-pagina-anterior" class="ghost" type="button">Anterior</button>
+      <span id="i-paginacao-info" class="muted">Pagina 1 de 1</span>
+      <button id="btn-i-pagina-proxima" class="ghost" type="button">Proxima</button>
     </div>
     <div id="msg-investimentos" class="notice">Lista carregada automaticamente. Selecione um investimento para abrir o overview.</div>
     <div id="lista-investimentos" class="list"></div>
@@ -855,6 +1023,85 @@
       <strong style="color: var(--accent-2);">Volume de clientes por mes</strong>
     </div>
     <div id="lista-dashboard-clientes-mes" class="list"></div>
+  </section>
+
+  <section id="tab-usuarios-admin" class="tab card">
+    <h2>Gestao de usuarios (ADMIN)</h2>
+    <div class="notice">Crie, selecione, altere e exclua usuarios. No cadastro, voce pode buscar cliente por CPF para preencher nome/email e sugerir cliente_id.</div>
+
+    <div class="row" style="margin-top: 8px;">
+      <button id="btn-u-novo" class="primary" type="button">Cadastrar novo usuario</button>
+      <input id="u-busca" type="text" placeholder="Buscar usuario por nome ou email" style="max-width: 420px;" />
+      <button id="btn-u-pagina-anterior" class="ghost" type="button">Anterior</button>
+      <span id="u-paginacao-info" class="muted">Pagina 1 de 1</span>
+      <button id="btn-u-pagina-proxima" class="ghost" type="button">Proxima</button>
+    </div>
+
+    <div id="msg-usuarios-admin" class="notice">Selecione um usuario para editar ou preencha os campos para criar.</div>
+    <div id="lista-usuarios-admin" class="list"></div>
+
+    <div id="usuario-overview-panel" class="action-panel" style="margin-top: 14px;">
+      <h3 style="margin:0 0 10px 0; color: var(--accent-2);">Usuario overview</h3>
+      <div id="msg-usuario-overview" class="muted">Selecione um usuario da lista para editar detalhes.</div>
+
+    <div class="form-grid" style="margin-top: 12px;">
+      <div>
+        <label>CPF do cliente (para pre-preenchimento)</label>
+        <input id="u-cliente-cpf" type="text" inputmode="numeric" maxlength="14" list="u-cliente-cpf-sugestoes" placeholder="Digite parte do CPF" />
+        <datalist id="u-cliente-cpf-sugestoes"></datalist>
+      </div>
+    </div>
+
+    <div class="form-grid" style="margin-top: 12px;">
+      <div>
+        <label>Nome</label>
+        <input id="u-nome" type="text" placeholder="Nome do usuario" />
+      </div>
+      <div>
+        <label>Email</label>
+        <input id="u-email" type="email" placeholder="usuario@empresa.com" />
+      </div>
+      <div>
+        <label>Role</label>
+        <select id="u-role">
+          <option value="ADMIN">ADMIN</option>
+          <option value="USUARIO">USUARIO</option>
+        </select>
+      </div>
+      <div>
+        <label>cliente_id (opcional para USUARIO)</label>
+        <input id="u-cliente-id" type="number" min="1" step="1" placeholder="Ex: 11" />
+      </div>
+      <div>
+        <label>Ativo</label>
+        <select id="u-ativo">
+          <option value="true">Ativo</option>
+          <option value="false">Inativo</option>
+        </select>
+      </div>
+      <div>
+        <label>Senha (obrigatoria ao criar)</label>
+        <input id="u-senha" type="password" placeholder="Minimo 6 caracteres" />
+      </div>
+    </div>
+
+    <div class="row">
+      <button id="btn-u-salvar" class="primary" type="button">Salvar usuario</button>
+      <button id="btn-u-excluir" class="ghost" type="button">Excluir usuario</button>
+      <button id="btn-u-voltar-lista" class="ghost" type="button">Voltar para lista</button>
+    </div>
+
+    <div class="form-grid" style="margin-top: 10px;">
+      <div>
+        <label>Nova senha do usuario selecionado</label>
+        <input id="u-nova-senha" type="password" placeholder="Minimo 6 caracteres" />
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <button id="btn-u-alterar-senha" class="ghost" type="button" style="width:100%;">Alterar senha do usuario</button>
+      </div>
+    </div>
+    </div>
   </section>
 
   <div id="dashboard-completo-fullscreen" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dashboard-completo-title">
@@ -1094,10 +1341,27 @@
     </div>
   </div>
 
+  <div id="usuario-acao-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="usuario-acao-dialog-title">
+    <div class="dialog-card">
+      <h3 id="usuario-acao-dialog-title" class="dialog-title">Confirmar acao</h3>
+      <p id="usuario-acao-dialog-body" class="dialog-body">Revise os dados antes de confirmar.</p>
+      <div class="dialog-summary">
+        <div class="dialog-row"><span>Usuario</span><strong id="usuario-acao-dialog-usuario">-</strong></div>
+        <div class="dialog-row"><span>Detalhe</span><strong id="usuario-acao-dialog-detalhe">-</strong></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="btn-cancelar-usuario-acao" class="ghost" type="button">Cancelar</button>
+        <button id="btn-confirmar-usuario-acao" class="primary" type="button">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API = 'http://localhost:8080';
+    const AUTH_STORAGE_KEY = 'mm_auth';
     let clientes = [];
     let termoBuscaClientes = '';
+    let paginaClientes = 1;
     let clienteSelecionado = null;
     let clienteExclusaoPendente = null;
     let enderecoExclusaoPendente = null;
@@ -1106,12 +1370,26 @@
     let clienteSimulacaoSelecionado = null;
     let investimentosCache = [];
     let termoBuscaInvestimentos = '';
+    let paginaInvestimentos = 1;
     let investimentoSelecionado = null;
     let parcelasInvestimentoSelecionado = [];
     let parcelaOverviewSelecionada = null;
     let pagamentoParcelaPendente = null;
     let quitacaoTotalPendente = null;
     let prorrogacaoParcelaPendente = null;
+    let usuariosAdminCache = [];
+    let usuarioAdminSelecionadoId = null;
+    let acaoUsuarioPendente = null;
+    let termoBuscaUsuariosAdmin = '';
+    let paginaUsuariosAdmin = 1;
+    let ultimoCpfBuscaUsuarioAdmin = '';
+    let timerBuscaCpfUsuarioAdmin = null;
+    let clientesCpfAutocompleteCache = [];
+    const USUARIOS_POR_PAGINA = 6;
+    let authToken = '';
+    let authUser = null;
+    const CLIENTES_POR_PAGINA = 10;
+    const INVESTIMENTOS_POR_PAGINA = 10;
 
     const tabButtons = document.querySelectorAll('.tab-btn');
     const tabs = {
@@ -1121,6 +1399,7 @@
       simulacao: document.getElementById('tab-simulacao'),
       investimentos: document.getElementById('tab-investimentos'),
       'dashboard-completo': document.getElementById('tab-dashboard-completo'),
+      'usuarios-admin': document.getElementById('tab-usuarios-admin'),
       'investimento-overview': document.getElementById('tab-investimento-overview'),
       'parcela-overview': document.getElementById('tab-parcela-overview'),
     };
@@ -1148,6 +1427,10 @@
 
       if (nomeTab === 'dashboard-completo') {
         carregarDashboardCompleto();
+      }
+
+      if (nomeTab === 'usuarios-admin' && isAdmin()) {
+        carregarUsuariosAdmin();
       }
 
       if (nomeTab === 'cliente-overview' && !clienteSelecionado) {
@@ -1192,12 +1475,18 @@
     const principalInput = document.getElementById('s-principal');
     const taxaInput = document.getElementById('s-taxa');
     const buscaClientesInput = document.getElementById('c-busca');
+    const btnClientesPaginaAnterior = document.getElementById('btn-c-pagina-anterior');
+    const btnClientesPaginaProxima = document.getElementById('btn-c-pagina-proxima');
+    const clientesPaginacaoInfo = document.getElementById('c-paginacao-info');
     const buscaClienteSimulacaoInput = document.getElementById('s-busca-cliente');
     const btnAjudaTipoImposto = document.getElementById('btn-ajuda-tipo-imposto');
     const clienteSimulacaoNomeInput = document.getElementById('s-cliente-nome');
     const clienteSimulacaoRendaInput = document.getElementById('s-cliente-renda');
     const clienteSimulacaoIdInput = document.getElementById('s-cliente-id');
     const buscaInvestimentosInput = document.getElementById('i-busca');
+    const btnInvestimentosPaginaAnterior = document.getElementById('btn-i-pagina-anterior');
+    const btnInvestimentosPaginaProxima = document.getElementById('btn-i-pagina-proxima');
+    const investimentosPaginacaoInfo = document.getElementById('i-paginacao-info');
     const btnCarregarDashboardCompleto = document.getElementById('btn-carregar-dashboard-completo');
     const msgDashboardCompleto = document.getElementById('msg-dashboard-completo');
     const listaDashboardClientesMes = document.getElementById('lista-dashboard-clientes-mes');
@@ -1272,6 +1561,42 @@
     const salvarClienteDialogCliente = document.getElementById('salvar-cliente-dialog-cliente');
     const salvarClienteDialogEndereco = document.getElementById('salvar-cliente-dialog-endereco');
     const btnFecharSalvarCliente = document.getElementById('btn-fechar-salvar-cliente');
+    const authScreen = document.getElementById('auth-screen');
+    const authStatusBadge = document.getElementById('auth-status-badge');
+    const btnLogout = document.getElementById('btn-logout');
+    const loginEmailInput = document.getElementById('login-email');
+    const loginSenhaInput = document.getElementById('login-senha');
+    const btnLogin = document.getElementById('btn-login');
+    const msgLogin = document.getElementById('msg-login');
+    const usuarioNomeInput = document.getElementById('u-nome');
+    const usuarioEmailInput = document.getElementById('u-email');
+    const usuarioClienteCpfInput = document.getElementById('u-cliente-cpf');
+    const usuarioClienteCpfSugestoes = document.getElementById('u-cliente-cpf-sugestoes');
+    const usuarioRoleInput = document.getElementById('u-role');
+    const usuarioClienteIdInput = document.getElementById('u-cliente-id');
+    const usuarioAtivoInput = document.getElementById('u-ativo');
+    const usuarioSenhaInput = document.getElementById('u-senha');
+    const usuarioNovaSenhaInput = document.getElementById('u-nova-senha');
+    const btnUsuarioNovo = document.getElementById('btn-u-novo');
+    const btnUsuarioSalvar = document.getElementById('btn-u-salvar');
+    const btnUsuarioExcluir = document.getElementById('btn-u-excluir');
+    const btnUsuarioAlterarSenha = document.getElementById('btn-u-alterar-senha');
+    const btnUsuarioVoltarLista = document.getElementById('btn-u-voltar-lista');
+    const msgUsuariosAdmin = document.getElementById('msg-usuarios-admin');
+    const msgUsuarioOverview = document.getElementById('msg-usuario-overview');
+    const listaUsuariosAdmin = document.getElementById('lista-usuarios-admin');
+    const usuarioOverviewPanel = document.getElementById('usuario-overview-panel');
+    const buscaUsuariosAdminInput = document.getElementById('u-busca');
+    const btnUsuariosPaginaAnterior = document.getElementById('btn-u-pagina-anterior');
+    const btnUsuariosPaginaProxima = document.getElementById('btn-u-pagina-proxima');
+    const usuariosPaginacaoInfo = document.getElementById('u-paginacao-info');
+    const dialogUsuarioAcao = document.getElementById('usuario-acao-dialog');
+    const usuarioAcaoDialogTitle = document.getElementById('usuario-acao-dialog-title');
+    const usuarioAcaoDialogBody = document.getElementById('usuario-acao-dialog-body');
+    const usuarioAcaoDialogUsuario = document.getElementById('usuario-acao-dialog-usuario');
+    const usuarioAcaoDialogDetalhe = document.getElementById('usuario-acao-dialog-detalhe');
+    const btnCancelarUsuarioAcao = document.getElementById('btn-cancelar-usuario-acao');
+    const btnConfirmarUsuarioAcao = document.getElementById('btn-confirmar-usuario-acao');
 
     cpfInput.addEventListener('input', () => {
       cpfInput.value = formatCpfInput(cpfInput.value);
@@ -1484,6 +1809,102 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizarEmail(value));
     }
 
+    function isAdmin() {
+      return String(authUser?.role || '').toUpperCase() === 'ADMIN';
+    }
+
+    function isUsuario() {
+      return String(authUser?.role || '').toUpperCase() === 'USUARIO';
+    }
+
+    function salvarSessaoAuth() {
+      if (!authToken || !authUser) {
+        sessionStorage.removeItem(AUTH_STORAGE_KEY);
+        return;
+      }
+
+      sessionStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify({
+        accessToken: authToken,
+        user: authUser,
+      }));
+    }
+
+    function restaurarSessaoAuth() {
+      try {
+        const raw = sessionStorage.getItem(AUTH_STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed?.accessToken && parsed?.user) {
+          authToken = String(parsed.accessToken);
+          authUser = parsed.user;
+        }
+      } catch (_err) {
+        sessionStorage.removeItem(AUTH_STORAGE_KEY);
+      }
+    }
+
+    function atualizarBadgeAuth() {
+      if (!authStatusBadge) return;
+
+      if (!authUser) {
+        authStatusBadge.textContent = 'Nao autenticado';
+        return;
+      }
+
+      authStatusBadge.textContent = `${authUser.nome} (${authUser.role})`;
+    }
+
+    function definirVisibilidadeTab(nomeTab, visivel) {
+      const tabButton = document.querySelector(`.tab-btn[data-tab="${nomeTab}"]`);
+      if (tabButton) {
+        tabButton.classList.toggle('is-hidden', !visivel);
+      }
+
+      if (!visivel && tabs[nomeTab]) {
+        tabs[nomeTab].classList.remove('active');
+      }
+    }
+
+    function aplicarPermissoesTelaPorRole() {
+      const admin = isAdmin();
+
+      definirVisibilidadeTab('clientes', admin);
+      definirVisibilidadeTab('clientes-lista', admin);
+      definirVisibilidadeTab('simulacao', admin);
+      definirVisibilidadeTab('usuarios-admin', admin);
+
+      if (!admin) {
+        btnQuitarTotal.classList.add('is-hidden');
+        btnQuitarParcelaOverview.classList.add('is-hidden');
+        btnProrrogarParcelaOverview.classList.add('is-hidden');
+        prorrogacaoDiasParcelaOverviewInput.classList.add('is-hidden');
+      } else {
+        btnQuitarParcelaOverview.classList.remove('is-hidden');
+        btnProrrogarParcelaOverview.classList.remove('is-hidden');
+        prorrogacaoDiasParcelaOverviewInput.classList.remove('is-hidden');
+      }
+    }
+
+    function abrirTelaLogin(mensagem = 'Informe suas credenciais para continuar.') {
+      if (authScreen) authScreen.classList.remove('is-hidden');
+      if (btnLogout) btnLogout.classList.add('is-hidden');
+      if (msgLogin) msgLogin.textContent = mensagem;
+      atualizarBadgeAuth();
+    }
+
+    function fecharTelaLogin() {
+      if (authScreen) authScreen.classList.add('is-hidden');
+      if (btnLogout) btnLogout.classList.remove('is-hidden');
+      atualizarBadgeAuth();
+    }
+
+    function encerrarSessao(mensagem = 'Informe suas credenciais para continuar.') {
+      authToken = '';
+      authUser = null;
+      salvarSessaoAuth();
+      abrirTelaLogin(mensagem);
+    }
+
     function normalizarCep(value) {
       return onlyDigits(value).slice(0, 8);
     }
@@ -1639,6 +2060,13 @@
       btnQuitarParcelaOverview.disabled = !(investimentoAtivo && parcelaEhProxima);
       btnProrrogarParcelaOverview.disabled = !(investimentoAtivo && parcelaPendente);
 
+      if (isUsuario()) {
+        btnQuitarParcelaOverview.disabled = true;
+        btnProrrogarParcelaOverview.disabled = true;
+        msgParcelaOverview.textContent = 'Perfil USUARIO possui acesso somente de visualizacao.';
+        return;
+      }
+
       if (!investimentoAtivo) {
         msgParcelaOverview.textContent = 'Este investimento nao possui saldo em aberto para novas acoes.';
       } else if (!parcelaPendente) {
@@ -1765,6 +2193,12 @@
     }
 
     function atualizarVisibilidadeQuitarTotal() {
+      if (isUsuario()) {
+        btnQuitarTotal.style.display = 'none';
+        btnQuitarTotal.disabled = true;
+        return;
+      }
+
       const hasSelected = Boolean(investimentoSelecionado);
       const saldo = Number(investimentoSelecionado?.saldo_devedor || 0);
       const statusInvestimento = String(investimentoSelecionado?.status || '').trim().toUpperCase();
@@ -1869,9 +2303,36 @@
       selecionarInvestimento(lista[0].id, false);
     }
 
+    function obterPaginacao(lista, paginaAtual, itensPorPagina) {
+      const totalItems = lista.length;
+      const totalPaginas = Math.max(1, Math.ceil(totalItems / itensPorPagina));
+      const paginaNormalizada = Math.min(Math.max(1, paginaAtual), totalPaginas);
+      const inicio = (paginaNormalizada - 1) * itensPorPagina;
+      const fim = inicio + itensPorPagina;
+
+      return {
+        paginaAtual: paginaNormalizada,
+        totalPaginas,
+        totalItems,
+        itensPagina: lista.slice(inicio, fim),
+      };
+    }
+
     function aplicarBuscaInvestimentos() {
       const filtrados = filtrarInvestimentos(investimentosCache, termoBuscaInvestimentos);
-      renderListaInvestimentos(filtrados);
+      const paginacao = obterPaginacao(filtrados, paginaInvestimentos, INVESTIMENTOS_POR_PAGINA);
+      paginaInvestimentos = paginacao.paginaAtual;
+      renderListaInvestimentos(paginacao.itensPagina);
+
+      if (investimentosPaginacaoInfo) {
+        investimentosPaginacaoInfo.textContent = `Pagina ${paginacao.paginaAtual} de ${paginacao.totalPaginas} (${paginacao.totalItems} investimento(s))`;
+      }
+      if (btnInvestimentosPaginaAnterior) {
+        btnInvestimentosPaginaAnterior.disabled = paginacao.paginaAtual <= 1;
+      }
+      if (btnInvestimentosPaginaProxima) {
+        btnInvestimentosPaginaProxima.disabled = paginacao.paginaAtual >= paginacao.totalPaginas;
+      }
 
       if (termoBuscaInvestimentos.trim()) {
         msgInvestimentos.textContent = `Resultado da busca "${termoBuscaInvestimentos}": ${filtrados.length} investimento(s).`;
@@ -2289,9 +2750,19 @@
       }
     }
 
-    async function fetchJson(url, options) {
-      const res = await fetch(url, options);
+    async function fetchJson(url, options = {}, meta = {}) {
+      const headers = { ...(options.headers || {}) };
+      if (!meta.skipAuth && authToken) {
+        headers.Authorization = `Bearer ${authToken}`;
+      }
+
+      const res = await fetch(url, { ...options, headers });
       const data = await res.json().catch(() => ({}));
+
+      if (res.status === 401 && !meta.skipAuth) {
+        encerrarSessao('Sessao expirada. Faca login novamente.');
+      }
+
       if (!res.ok) throw data;
       return data;
     }
@@ -2547,6 +3018,18 @@
       list.innerHTML = '';
 
       const filtrados = filtrarClientes(clientes, termoBuscaClientes);
+      const paginacao = obterPaginacao(filtrados, paginaClientes, CLIENTES_POR_PAGINA);
+      paginaClientes = paginacao.paginaAtual;
+
+      if (clientesPaginacaoInfo) {
+        clientesPaginacaoInfo.textContent = `Pagina ${paginacao.paginaAtual} de ${paginacao.totalPaginas} (${paginacao.totalItems} cliente(s))`;
+      }
+      if (btnClientesPaginaAnterior) {
+        btnClientesPaginaAnterior.disabled = paginacao.paginaAtual <= 1;
+      }
+      if (btnClientesPaginaProxima) {
+        btnClientesPaginaProxima.disabled = paginacao.paginaAtual >= paginacao.totalPaginas;
+      }
 
       if (!filtrados.length) {
         if (!clientes.length) {
@@ -2557,7 +3040,7 @@
         return;
       }
 
-      filtrados.forEach((c) => {
+      paginacao.itensPagina.forEach((c) => {
         const card = document.createElement('div');
         card.className = 'card cliente-item';
         card.dataset.clienteId = c.id;
@@ -2604,6 +3087,716 @@
         document.getElementById('msg-clientes').textContent = `Clientes carregados: ${clientes.length}`;
       } catch (err) {
         document.getElementById('msg-clientes').textContent = 'Erro ao carregar clientes.';
+      }
+    }
+
+    function atualizarCampoClienteIdPorRole() {
+      const role = String(usuarioRoleInput?.value || 'USUARIO').toUpperCase();
+      const requerCliente = role === 'USUARIO';
+      if (!usuarioClienteIdInput) return;
+
+      usuarioClienteIdInput.disabled = !requerCliente;
+      usuarioClienteIdInput.placeholder = requerCliente ? 'Ex: 11 (opcional)' : 'Nao se aplica para ADMIN';
+
+      if (!requerCliente) {
+        usuarioClienteIdInput.value = '';
+      }
+    }
+
+    async function carregarClientesCpfAutocomplete() {
+      if (!isAdmin()) return;
+      if (clientesCpfAutocompleteCache.length > 0) return;
+
+      try {
+        const listaClientes = await fetchJson(`${API}/clientes`);
+        const mapaCpf = new Map();
+
+        (Array.isArray(listaClientes) ? listaClientes : []).forEach((cliente) => {
+          const cpf = onlyDigits(cliente?.cpf || '').slice(0, 11);
+          if (cpf.length !== 11) return;
+          if (!mapaCpf.has(cpf)) {
+            mapaCpf.set(cpf, {
+              cpf,
+              id: Number(cliente.id),
+              nome: String(cliente.nome || ''),
+            });
+          }
+        });
+
+        clientesCpfAutocompleteCache = Array.from(mapaCpf.values())
+          .sort((a, b) => a.cpf.localeCompare(b.cpf));
+      } catch (_err) {
+        clientesCpfAutocompleteCache = [];
+      }
+    }
+
+    function atualizarSugestoesCpfUsuario(prefixoCpf = '') {
+      if (!usuarioClienteCpfSugestoes) return;
+      usuarioClienteCpfSugestoes.innerHTML = '';
+
+      const prefixo = onlyDigits(prefixoCpf || '').slice(0, 11);
+      const base = clientesCpfAutocompleteCache;
+      if (!base.length) return;
+
+      const filtrados = (prefixo.length >= 3
+        ? base.filter((item) => item.cpf.startsWith(prefixo))
+        : base)
+        .slice(0, 8);
+
+      filtrados.forEach((item) => {
+        const option = document.createElement('option');
+        option.value = formatCpfInput(item.cpf);
+        option.label = `${item.nome} (#${item.id})`;
+        usuarioClienteCpfSugestoes.appendChild(option);
+      });
+    }
+
+    async function tentarAutocompletarCpfParcial() {
+      if (!usuarioClienteCpfInput) return false;
+
+      const atual = onlyDigits(usuarioClienteCpfInput.value || '').slice(0, 11);
+      if (atual.length >= 11 || atual.length < 3) return false;
+
+      await carregarClientesCpfAutocomplete();
+      if (!clientesCpfAutocompleteCache.length) return false;
+
+      const matches = clientesCpfAutocompleteCache.filter((item) => item.cpf.startsWith(atual));
+      if (matches.length !== 1) return false;
+
+      usuarioClienteCpfInput.value = formatCpfInput(matches[0].cpf);
+      atualizarSugestoesCpfUsuario(matches[0].cpf);
+      return true;
+    }
+
+    function agendarBuscaClientePorCpfCadastroUsuario() {
+      if (timerBuscaCpfUsuarioAdmin) {
+        clearTimeout(timerBuscaCpfUsuarioAdmin);
+      }
+
+      const cpf = onlyDigits(usuarioClienteCpfInput?.value || '').slice(0, 11);
+      if (cpf.length < 3) {
+        ultimoCpfBuscaUsuarioAdmin = '';
+        return;
+      }
+
+      timerBuscaCpfUsuarioAdmin = setTimeout(async () => {
+        await buscarClientePorCpfCadastroUsuario({ silentInvalid: true });
+      }, 300);
+    }
+
+    async function buscarClientePorCpfCadastroUsuario(options = {}) {
+      const { silentInvalid = false, force = false } = options;
+      if (!isAdmin()) return;
+
+      const cpf = onlyDigits(usuarioClienteCpfInput?.value || '').slice(0, 11);
+      if (cpf.length < 3) {
+        if (!silentInvalid && msgUsuariosAdmin) {
+          msgUsuariosAdmin.textContent = 'Informe ao menos 3 digitos do CPF para localizar cliente.';
+        }
+        return;
+      }
+
+      if (!force && cpf === ultimoCpfBuscaUsuarioAdmin) {
+        return;
+      }
+
+      try {
+        ultimoCpfBuscaUsuarioAdmin = cpf;
+        const cliente = await fetchJson(`${API}/auth/clientes-lookup?cpf=${encodeURIComponent(cpf)}`);
+
+        if (usuarioNomeInput && !String(usuarioNomeInput.value || '').trim()) {
+          usuarioNomeInput.value = String(cliente.nome || '');
+        }
+        if (usuarioEmailInput && !String(usuarioEmailInput.value || '').trim()) {
+          usuarioEmailInput.value = String(cliente.email || '');
+        }
+        if (usuarioClienteIdInput && !String(usuarioClienteIdInput.value || '').trim()) {
+          usuarioClienteIdInput.value = cliente.id == null ? '' : String(cliente.id);
+        }
+
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = `Cliente localizado por CPF: ${cliente.nome} (#${cliente.id}). Campos preenchidos automaticamente quando vazios.`;
+        if (msgUsuarioOverview) msgUsuarioOverview.textContent = `Cliente por CPF carregado: ${cliente.nome}. Voce pode ajustar os dados antes de salvar.`;
+      } catch (err) {
+        ultimoCpfBuscaUsuarioAdmin = '';
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = err.error || 'Cliente nao encontrado para o CPF informado.';
+      }
+    }
+
+    function ativarModoNovoUsuarioPorCpf() {
+      if (!Number.isInteger(Number(usuarioAdminSelecionadoId))) return;
+
+      usuarioAdminSelecionadoId = null;
+      if (usuarioNomeInput) usuarioNomeInput.value = '';
+      if (usuarioEmailInput) usuarioEmailInput.value = '';
+      if (usuarioClienteIdInput) usuarioClienteIdInput.value = '';
+      if (usuarioSenhaInput) usuarioSenhaInput.value = '';
+      if (usuarioNovaSenhaInput) usuarioNovaSenhaInput.value = '';
+      if (usuarioAtivoInput) usuarioAtivoInput.value = 'true';
+      if (usuarioRoleInput) usuarioRoleInput.value = 'USUARIO';
+      atualizarCampoClienteIdPorRole();
+      renderUsuariosAdmin();
+
+      if (msgUsuarioOverview) {
+        msgUsuarioOverview.textContent = 'Modo novo usuario ativado por CPF. Complete os dados e salve.';
+      }
+    }
+
+    async function prepararCadastroUsuarioPorCpf(isCreate) {
+      if (!isCreate) return;
+
+      const role = String(usuarioRoleInput?.value || '').toUpperCase();
+      if (role !== 'USUARIO') return;
+
+      const cpfAtual = onlyDigits(usuarioClienteCpfInput?.value || '').slice(0, 11);
+      if (cpfAtual.length >= 3 && cpfAtual.length < 11) {
+        await tentarAutocompletarCpfParcial();
+      }
+
+      const cpfFinal = onlyDigits(usuarioClienteCpfInput?.value || '').slice(0, 11);
+      if (cpfFinal.length === 11) {
+        await buscarClientePorCpfCadastroUsuario({ force: true, silentInvalid: true });
+      }
+    }
+
+    function limparFormularioUsuariosAdmin() {
+      usuarioAdminSelecionadoId = null;
+      ultimoCpfBuscaUsuarioAdmin = '';
+      if (timerBuscaCpfUsuarioAdmin) {
+        clearTimeout(timerBuscaCpfUsuarioAdmin);
+        timerBuscaCpfUsuarioAdmin = null;
+      }
+      if (usuarioNomeInput) usuarioNomeInput.value = '';
+      if (usuarioEmailInput) usuarioEmailInput.value = '';
+      if (usuarioClienteCpfInput) usuarioClienteCpfInput.value = '';
+      if (usuarioRoleInput) usuarioRoleInput.value = 'USUARIO';
+      if (usuarioClienteIdInput) usuarioClienteIdInput.value = '';
+      if (usuarioAtivoInput) usuarioAtivoInput.value = 'true';
+      if (usuarioSenhaInput) usuarioSenhaInput.value = '';
+      if (usuarioNovaSenhaInput) usuarioNovaSenhaInput.value = '';
+      if (buscaUsuariosAdminInput) buscaUsuariosAdminInput.value = termoBuscaUsuariosAdmin;
+      atualizarCampoClienteIdPorRole();
+      if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Novo usuario: preencha os campos e clique em Salvar usuario.';
+      if (msgUsuarioOverview) msgUsuarioOverview.textContent = 'Cadastro em modo novo usuario.';
+      atualizarSugestoesCpfUsuario('');
+    }
+
+    function preencherFormularioUsuariosAdmin(usuario) {
+      if (!usuario) return;
+      usuarioAdminSelecionadoId = Number(usuario.id);
+      ultimoCpfBuscaUsuarioAdmin = '';
+      if (usuarioNomeInput) usuarioNomeInput.value = String(usuario.nome || '');
+      if (usuarioEmailInput) usuarioEmailInput.value = String(usuario.email || '');
+      if (usuarioClienteCpfInput) usuarioClienteCpfInput.value = '';
+      if (usuarioRoleInput) usuarioRoleInput.value = String(usuario.role || 'USUARIO').toUpperCase();
+      if (usuarioClienteIdInput) {
+        usuarioClienteIdInput.value = usuario.cliente_id == null ? '' : String(usuario.cliente_id);
+      }
+      if (usuarioAtivoInput) usuarioAtivoInput.value = usuario.ativo ? 'true' : 'false';
+      if (usuarioSenhaInput) usuarioSenhaInput.value = '';
+      if (usuarioNovaSenhaInput) usuarioNovaSenhaInput.value = '';
+      atualizarCampoClienteIdPorRole();
+      if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = `Usuario selecionado: ${usuario.nome} (#${usuario.id}).`;
+      if (msgUsuarioOverview) msgUsuarioOverview.textContent = `Overview ativo para ${usuario.nome} (#${usuario.id}).`;
+      atualizarSugestoesCpfUsuario('');
+    }
+
+    function abrirOverviewUsuarioPanel() {
+      if (!usuarioOverviewPanel) return;
+      usuarioOverviewPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function voltarParaListaUsuarios() {
+      if (!listaUsuariosAdmin) return;
+      listaUsuariosAdmin.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function closeUsuarioAcaoDialog() {
+      if (!dialogUsuarioAcao) return;
+      dialogUsuarioAcao.classList.add('hidden');
+      dialogUsuarioAcao.setAttribute('aria-hidden', 'true');
+      acaoUsuarioPendente = null;
+      if (btnConfirmarUsuarioAcao) btnConfirmarUsuarioAcao.disabled = false;
+    }
+
+    function openUsuarioAcaoDialog(data) {
+      if (!dialogUsuarioAcao) return;
+      acaoUsuarioPendente = data;
+      if (usuarioAcaoDialogTitle) usuarioAcaoDialogTitle.textContent = data.titulo;
+      if (usuarioAcaoDialogBody) usuarioAcaoDialogBody.textContent = data.mensagem;
+      if (usuarioAcaoDialogUsuario) usuarioAcaoDialogUsuario.textContent = data.usuario || '-';
+      if (usuarioAcaoDialogDetalhe) usuarioAcaoDialogDetalhe.textContent = data.detalhe || '-';
+      dialogUsuarioAcao.classList.remove('hidden');
+      dialogUsuarioAcao.setAttribute('aria-hidden', 'false');
+    }
+
+    function filtrarUsuariosAdmin(lista, termo) {
+      const normalized = String(termo || '').trim().toLowerCase();
+      if (!normalized) return [...lista];
+
+      return lista.filter((usuario) => {
+        const nome = String(usuario.nome || '').toLowerCase();
+        const email = String(usuario.email || '').toLowerCase();
+        return nome.includes(normalized) || email.includes(normalized);
+      });
+    }
+
+    function obterPaginacaoUsuariosAdmin(listaFiltrada) {
+      const totalItems = listaFiltrada.length;
+      const totalPaginas = Math.max(1, Math.ceil(totalItems / USUARIOS_POR_PAGINA));
+      const paginaAtual = Math.min(Math.max(1, paginaUsuariosAdmin), totalPaginas);
+      const inicio = (paginaAtual - 1) * USUARIOS_POR_PAGINA;
+      const fim = inicio + USUARIOS_POR_PAGINA;
+      const itensPagina = listaFiltrada.slice(inicio, fim);
+
+      paginaUsuariosAdmin = paginaAtual;
+
+      return {
+        itensPagina,
+        paginaAtual,
+        totalPaginas,
+        totalItems,
+      };
+    }
+
+    function atualizarControlesPaginacaoUsuariosAdmin(info) {
+      if (usuariosPaginacaoInfo) {
+        usuariosPaginacaoInfo.textContent = `Pagina ${info.paginaAtual} de ${info.totalPaginas} (${info.totalItems} usuario(s))`;
+      }
+
+      if (btnUsuariosPaginaAnterior) {
+        btnUsuariosPaginaAnterior.disabled = info.paginaAtual <= 1;
+      }
+
+      if (btnUsuariosPaginaProxima) {
+        btnUsuariosPaginaProxima.disabled = info.paginaAtual >= info.totalPaginas;
+      }
+    }
+
+    function renderUsuariosAdmin() {
+      if (!listaUsuariosAdmin) return;
+      listaUsuariosAdmin.innerHTML = '';
+
+      const listaFiltrada = filtrarUsuariosAdmin(usuariosAdminCache, termoBuscaUsuariosAdmin);
+      const paginacao = obterPaginacaoUsuariosAdmin(listaFiltrada);
+      atualizarControlesPaginacaoUsuariosAdmin(paginacao);
+
+      if (!listaFiltrada.length) {
+        listaUsuariosAdmin.innerHTML = termoBuscaUsuariosAdmin.trim()
+          ? '<div class="notice">Nenhum usuario encontrado para o filtro informado.</div>'
+          : '<div class="notice">Nenhum usuario cadastrado.</div>';
+        return;
+      }
+
+      paginacao.itensPagina.forEach((usuario) => {
+        const card = document.createElement('div');
+        card.className = 'card cliente-item';
+        card.dataset.usuarioId = String(usuario.id);
+        if (Number(usuarioAdminSelecionadoId) === Number(usuario.id)) {
+          card.classList.add('selected');
+        }
+
+        card.innerHTML = `
+          <div class="row">
+            <strong>${usuario.nome}</strong>
+            <span class="pill">${usuario.role}</span>
+          </div>
+          <div class="muted">Email ${usuario.email} | Ativo ${usuario.ativo ? 'SIM' : 'NAO'} | cliente_id ${usuario.cliente_id ?? '-'}</div>
+        `;
+
+        card.addEventListener('click', () => {
+          preencherFormularioUsuariosAdmin(usuario);
+          renderUsuariosAdmin();
+          abrirOverviewUsuarioPanel();
+        });
+
+        listaUsuariosAdmin.appendChild(card);
+      });
+    }
+
+    function normalizarListaUsuariosResponse(raw) {
+      if (Array.isArray(raw)) {
+        return raw;
+      }
+
+      if (raw && typeof raw === 'object') {
+        const values = Object.values(raw).filter((item) => item && typeof item === 'object');
+        if (values.length > 0) {
+          return values;
+        }
+      }
+
+      return [];
+    }
+
+    async function carregarUsuariosAdmin() {
+      if (!isAdmin()) return;
+      try {
+        const response = await fetchJson(`${API}/auth/usuarios`);
+        usuariosAdminCache = normalizarListaUsuariosResponse(response);
+
+        const totalPaginas = Math.max(1, Math.ceil(filtrarUsuariosAdmin(usuariosAdminCache, termoBuscaUsuariosAdmin).length / USUARIOS_POR_PAGINA));
+        if (paginaUsuariosAdmin > totalPaginas) {
+          paginaUsuariosAdmin = totalPaginas;
+        }
+
+        if (usuarioAdminSelecionadoId != null) {
+          const stillSelected = usuariosAdminCache.find((item) => Number(item.id) === Number(usuarioAdminSelecionadoId));
+          if (stillSelected) {
+            preencherFormularioUsuariosAdmin(stillSelected);
+          } else {
+            limparFormularioUsuariosAdmin();
+          }
+        }
+
+        renderUsuariosAdmin();
+      } catch (err) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = err.error || 'Falha ao carregar usuarios.';
+      }
+    }
+
+    function montarPayloadUsuarioAdmin({ isCreate }) {
+      const nome = String(usuarioNomeInput?.value || '').trim();
+      const email = normalizarEmail(usuarioEmailInput?.value || '');
+      const clienteCpf = onlyDigits(usuarioClienteCpfInput?.value || '').slice(0, 11);
+      const role = String(usuarioRoleInput?.value || '').toUpperCase();
+      const clienteIdRaw = String(usuarioClienteIdInput?.value || '').trim();
+      const clienteId = clienteIdRaw ? Number(clienteIdRaw) : null;
+      const ativo = String(usuarioAtivoInput?.value || 'true') === 'true';
+      const senha = String(usuarioSenhaInput?.value || '');
+
+      const permiteCreatePorCpf = isCreate && role === 'USUARIO' && clienteCpf.length >= 3;
+      if ((!nome || !email) && !permiteCreatePorCpf) {
+        throw new Error('Nome e email sao obrigatorios. Informe ao menos 3 digitos do CPF para preencher automaticamente.');
+      }
+
+      if (!role) {
+        throw new Error('Nome, email e role sao obrigatorios.');
+      }
+
+      if (!validarEmail(email)) {
+        throw new Error('Email invalido.');
+      }
+
+      if (role !== 'ADMIN' && role !== 'USUARIO') {
+        throw new Error('Role invalida.');
+      }
+
+      if (clienteId != null && (!Number.isInteger(clienteId) || clienteId <= 0)) {
+        throw new Error('cliente_id invalido.');
+      }
+
+      if (isCreate && senha.length < 6) {
+        throw new Error('Senha obrigatoria na criacao (minimo 6 caracteres).');
+      }
+
+      return {
+        nome,
+        email,
+        role,
+        cliente_id: role === 'USUARIO' ? clienteId : null,
+        cliente_cpf: role === 'USUARIO' ? clienteCpf : '',
+        ativo,
+        senha,
+      };
+    }
+
+    function obterUsuarioAdminSelecionado() {
+      if (!Number.isInteger(Number(usuarioAdminSelecionadoId))) return null;
+      return usuariosAdminCache.find((item) => Number(item.id) === Number(usuarioAdminSelecionadoId)) || null;
+    }
+
+    function payloadUsuarioAdminTemAlteracao(payload) {
+      const selecionado = obterUsuarioAdminSelecionado();
+      if (!selecionado) return true;
+
+      const nomeAtual = String(selecionado.nome || '').trim();
+      const emailAtual = normalizarEmail(selecionado.email || '');
+      const roleAtual = String(selecionado.role || '').toUpperCase();
+      const clienteAtual = selecionado.cliente_id == null || selecionado.cliente_id === '' ? null : Number(selecionado.cliente_id);
+      const ativoAtual = Boolean(selecionado.ativo);
+
+      const houveMudanca =
+        nomeAtual !== payload.nome
+        || emailAtual !== payload.email
+        || roleAtual !== payload.role
+        || Number(clienteAtual || 0) !== Number(payload.cliente_id || 0)
+        || ativoAtual !== Boolean(payload.ativo);
+
+      return houveMudanca;
+    }
+
+    async function salvarUsuarioAdmin() {
+      if (!isAdmin()) return;
+
+      try {
+        const isCreate = !Number.isInteger(Number(usuarioAdminSelecionadoId));
+        await prepararCadastroUsuarioPorCpf(isCreate);
+        const payload = montarPayloadUsuarioAdmin({ isCreate });
+
+        if (!isCreate && !payloadUsuarioAdminTemAlteracao(payload)) {
+          throw new Error('Nenhuma alteracao detectada para salvar.');
+        }
+
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = isCreate ? 'Criando usuario...' : 'Atualizando usuario...';
+        if (btnUsuarioSalvar) btnUsuarioSalvar.disabled = true;
+
+        if (isCreate) {
+          const criado = await fetchJson(`${API}/auth/usuarios`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nome: payload.nome,
+              email: payload.email,
+              role: payload.role,
+              cliente_id: payload.cliente_id,
+              cliente_cpf: payload.cliente_cpf,
+              senha: payload.senha,
+            }),
+          });
+          usuarioAdminSelecionadoId = Number(criado?.id) || null;
+          termoBuscaUsuariosAdmin = '';
+          paginaUsuariosAdmin = 1;
+          if (buscaUsuariosAdminInput) buscaUsuariosAdminInput.value = '';
+          if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Usuario criado com sucesso.';
+        } else {
+          await fetchJson(`${API}/auth/usuarios/${usuarioAdminSelecionadoId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nome: payload.nome,
+              email: payload.email,
+              role: payload.role,
+              cliente_id: payload.cliente_id,
+              ativo: payload.ativo,
+            }),
+          });
+          paginaUsuariosAdmin = 1;
+          if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Usuario atualizado com sucesso.';
+        }
+
+        if (usuarioSenhaInput) usuarioSenhaInput.value = '';
+        await carregarUsuariosAdmin();
+      } catch (err) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = err.error || err.message || 'Falha ao salvar usuario.';
+      } finally {
+        if (btnUsuarioSalvar) btnUsuarioSalvar.disabled = false;
+      }
+    }
+
+    async function solicitarSalvarUsuarioAdmin() {
+      if (!isAdmin()) return;
+
+      try {
+        const isCreate = !Number.isInteger(Number(usuarioAdminSelecionadoId));
+        await prepararCadastroUsuarioPorCpf(isCreate);
+        const payload = montarPayloadUsuarioAdmin({ isCreate });
+
+        if (!isCreate && !payloadUsuarioAdminTemAlteracao(payload)) {
+          if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Nenhuma alteracao detectada para salvar.';
+          return;
+        }
+
+        openUsuarioAcaoDialog({
+          tipo: 'salvar',
+          isCreate,
+          payload,
+          titulo: isCreate ? 'Confirmar cadastro de usuario' : 'Confirmar alteracoes do usuario',
+          mensagem: isCreate
+            ? 'Deseja cadastrar este novo usuario?'
+            : 'Deseja salvar as alteracoes deste usuario?',
+          usuario: payload.nome,
+          detalhe: `${payload.email} | ${payload.role}${payload.cliente_id ? ` | cliente_id ${payload.cliente_id}` : ''}`,
+        });
+      } catch (err) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = err.message || 'Dados invalidos para salvar usuario.';
+      }
+    }
+
+    async function excluirUsuarioAdmin() {
+      if (!isAdmin()) return;
+      if (!Number.isInteger(Number(usuarioAdminSelecionadoId))) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Selecione um usuario para excluir.';
+        return;
+      }
+
+      try {
+        if (btnUsuarioExcluir) btnUsuarioExcluir.disabled = true;
+        await fetchJson(`${API}/auth/usuarios/${usuarioAdminSelecionadoId}`, {
+          method: 'DELETE',
+        });
+
+        limparFormularioUsuariosAdmin();
+        await carregarUsuariosAdmin();
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Usuario excluido com sucesso.';
+      } catch (err) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = err.error || 'Falha ao excluir usuario.';
+      } finally {
+        if (btnUsuarioExcluir) btnUsuarioExcluir.disabled = false;
+      }
+    }
+
+    function solicitarExcluirUsuarioAdmin() {
+      if (!isAdmin()) return;
+      if (!Number.isInteger(Number(usuarioAdminSelecionadoId))) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Selecione um usuario para excluir.';
+        return;
+      }
+
+      const usuario = usuariosAdminCache.find((item) => Number(item.id) === Number(usuarioAdminSelecionadoId));
+      openUsuarioAcaoDialog({
+        tipo: 'excluir',
+        titulo: 'Confirmar exclusao de usuario',
+        mensagem: 'Esta acao exclui o usuario permanentemente. Deseja continuar?',
+        usuario: usuario ? `${usuario.nome} (#${usuario.id})` : `#${usuarioAdminSelecionadoId}`,
+        detalhe: usuario ? usuario.email : '-',
+      });
+    }
+
+    async function alterarSenhaUsuarioAdmin() {
+      if (!isAdmin()) return;
+      if (!Number.isInteger(Number(usuarioAdminSelecionadoId))) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Selecione um usuario para alterar senha.';
+        return;
+      }
+
+      const novaSenha = String(usuarioNovaSenhaInput?.value || '');
+      if (novaSenha.length < 6) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Nova senha deve conter ao menos 6 caracteres.';
+        return;
+      }
+
+      try {
+        if (btnUsuarioAlterarSenha) btnUsuarioAlterarSenha.disabled = true;
+        await fetchJson(`${API}/auth/usuarios/${usuarioAdminSelecionadoId}/senha`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nova_senha: novaSenha }),
+        });
+
+        if (usuarioNovaSenhaInput) usuarioNovaSenhaInput.value = '';
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Senha do usuario alterada com sucesso.';
+      } catch (err) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = err.error || 'Falha ao alterar senha do usuario.';
+      } finally {
+        if (btnUsuarioAlterarSenha) btnUsuarioAlterarSenha.disabled = false;
+      }
+    }
+
+    function solicitarAlterarSenhaUsuarioAdmin() {
+      if (!isAdmin()) return;
+      if (!Number.isInteger(Number(usuarioAdminSelecionadoId))) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Selecione um usuario para alterar senha.';
+        return;
+      }
+
+      const novaSenha = String(usuarioNovaSenhaInput?.value || '');
+      if (novaSenha.length < 6) {
+        if (msgUsuariosAdmin) msgUsuariosAdmin.textContent = 'Nova senha deve conter ao menos 6 caracteres.';
+        return;
+      }
+
+      const usuario = usuariosAdminCache.find((item) => Number(item.id) === Number(usuarioAdminSelecionadoId));
+      openUsuarioAcaoDialog({
+        tipo: 'senha',
+        titulo: 'Confirmar alteracao de senha',
+        mensagem: 'Deseja aplicar a nova senha para este usuario?',
+        usuario: usuario ? `${usuario.nome} (#${usuario.id})` : `#${usuarioAdminSelecionadoId}`,
+        detalhe: 'Nova senha informada',
+      });
+    }
+
+    async function confirmarAcaoUsuarioDialog() {
+      if (!acaoUsuarioPendente) return;
+      if (btnConfirmarUsuarioAcao) btnConfirmarUsuarioAcao.disabled = true;
+
+      try {
+        if (acaoUsuarioPendente.tipo === 'salvar') {
+          await salvarUsuarioAdmin();
+        } else if (acaoUsuarioPendente.tipo === 'excluir') {
+          await excluirUsuarioAdmin();
+        } else if (acaoUsuarioPendente.tipo === 'senha') {
+          await alterarSenhaUsuarioAdmin();
+        }
+        closeUsuarioAcaoDialog();
+      } catch (_err) {
+        if (btnConfirmarUsuarioAcao) btnConfirmarUsuarioAcao.disabled = false;
+      }
+    }
+
+    async function iniciarSessaoAutenticada() {
+      aplicarPermissoesTelaPorRole();
+      fecharTelaLogin();
+
+      if (isAdmin()) {
+        abrirTab('clientes');
+      } else {
+        abrirTab('investimentos');
+      }
+
+      try {
+        await carregarDashboard();
+      } catch (_err) {
+        // sem bloqueio
+      }
+
+      try {
+        await carregarInvestimentosTodos();
+      } catch (_err) {
+        // sem bloqueio
+      }
+    }
+
+    async function autenticarLogin() {
+      const email = normalizarEmail(loginEmailInput?.value || '');
+      const senha = String(loginSenhaInput?.value || '').trim();
+
+      if (!validarEmail(email)) {
+        if (msgLogin) msgLogin.textContent = 'Informe um email valido.';
+        return;
+      }
+
+      if (!senha) {
+        if (msgLogin) msgLogin.textContent = 'Informe a senha.';
+        return;
+      }
+
+      try {
+        if (btnLogin) btnLogin.disabled = true;
+        if (msgLogin) msgLogin.textContent = 'Autenticando...';
+
+        const resposta = await fetchJson(`${API}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, senha }),
+        }, { skipAuth: true });
+
+        authToken = String(resposta.accessToken || '');
+        authUser = resposta.user || null;
+        salvarSessaoAuth();
+        await iniciarSessaoAutenticada();
+      } catch (err) {
+        if (msgLogin) msgLogin.textContent = err.error || 'Falha no login.';
+      } finally {
+        if (btnLogin) btnLogin.disabled = false;
+      }
+    }
+
+    async function validarSessaoInicial() {
+      restaurarSessaoAuth();
+      atualizarBadgeAuth();
+
+      if (!authToken || !authUser) {
+        abrirTelaLogin('Informe suas credenciais para continuar.');
+        return;
+      }
+
+      try {
+        const me = await fetchJson(`${API}/auth/me`);
+        authUser = me.user;
+        salvarSessaoAuth();
+        await iniciarSessaoAutenticada();
+      } catch (_err) {
+        encerrarSessao('Sessao invalida. Faca login novamente.');
       }
     }
 
@@ -2782,6 +3975,7 @@
 
     buscaClientesInput.addEventListener('input', (event) => {
       termoBuscaClientes = event.target.value;
+      paginaClientes = 1;
       renderClientes();
     });
 
@@ -2853,6 +4047,112 @@
     btnCancelarProrrogacaoParcela.addEventListener('click', closeProrrogacaoParcelaDialog);
     btnConfirmarProrrogacaoParcela.addEventListener('click', confirmarProrrogacaoParcela);
     btnFecharSalvarCliente.addEventListener('click', closeSalvarClienteDialog);
+    if (btnLogin) {
+      btnLogin.addEventListener('click', autenticarLogin);
+    }
+    if (loginSenhaInput) {
+      loginSenhaInput.addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          await autenticarLogin();
+        }
+      });
+    }
+    if (usuarioClienteCpfInput) {
+      usuarioClienteCpfInput.addEventListener('focus', async () => {
+        await carregarClientesCpfAutocomplete();
+        atualizarSugestoesCpfUsuario(usuarioClienteCpfInput.value || '');
+      });
+      usuarioClienteCpfInput.addEventListener('input', async () => {
+        ativarModoNovoUsuarioPorCpf();
+        usuarioClienteCpfInput.value = formatCpfInput(usuarioClienteCpfInput.value);
+        await carregarClientesCpfAutocomplete();
+        atualizarSugestoesCpfUsuario(usuarioClienteCpfInput.value || '');
+        agendarBuscaClientePorCpfCadastroUsuario();
+      });
+      usuarioClienteCpfInput.addEventListener('keydown', async (event) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          await tentarAutocompletarCpfParcial();
+          await buscarClientePorCpfCadastroUsuario({ force: true });
+        }
+      });
+      usuarioClienteCpfInput.addEventListener('blur', async () => {
+        const cpf = onlyDigits(usuarioClienteCpfInput.value || '').slice(0, 11);
+        if (cpf.length < 11) {
+          await tentarAutocompletarCpfParcial();
+        }
+        if (onlyDigits(usuarioClienteCpfInput.value || '').slice(0, 11).length === 11) {
+          await buscarClientePorCpfCadastroUsuario({ force: true, silentInvalid: true });
+        }
+      });
+    }
+    if (btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        encerrarSessao();
+      });
+    }
+    if (usuarioRoleInput) {
+      usuarioRoleInput.addEventListener('change', () => {
+        atualizarCampoClienteIdPorRole();
+      });
+    }
+    if (btnUsuarioNovo) {
+      btnUsuarioNovo.addEventListener('click', () => {
+        limparFormularioUsuariosAdmin();
+        renderUsuariosAdmin();
+        abrirOverviewUsuarioPanel();
+      });
+    }
+    if (btnUsuarioSalvar) {
+      btnUsuarioSalvar.addEventListener('click', async () => {
+        solicitarSalvarUsuarioAdmin();
+      });
+    }
+    if (btnUsuarioExcluir) {
+      btnUsuarioExcluir.addEventListener('click', async () => {
+        solicitarExcluirUsuarioAdmin();
+      });
+    }
+    if (btnUsuarioAlterarSenha) {
+      btnUsuarioAlterarSenha.addEventListener('click', async () => {
+        solicitarAlterarSenhaUsuarioAdmin();
+      });
+    }
+    if (btnUsuarioVoltarLista) {
+      btnUsuarioVoltarLista.addEventListener('click', () => {
+        voltarParaListaUsuarios();
+      });
+    }
+    if (btnCancelarUsuarioAcao) {
+      btnCancelarUsuarioAcao.addEventListener('click', () => {
+        closeUsuarioAcaoDialog();
+      });
+    }
+    if (btnConfirmarUsuarioAcao) {
+      btnConfirmarUsuarioAcao.addEventListener('click', async () => {
+        await confirmarAcaoUsuarioDialog();
+      });
+    }
+    if (buscaUsuariosAdminInput) {
+      buscaUsuariosAdminInput.addEventListener('input', (event) => {
+        termoBuscaUsuariosAdmin = event.target.value || '';
+        paginaUsuariosAdmin = 1;
+        renderUsuariosAdmin();
+      });
+    }
+    if (btnUsuariosPaginaAnterior) {
+      btnUsuariosPaginaAnterior.addEventListener('click', () => {
+        paginaUsuariosAdmin = Math.max(1, paginaUsuariosAdmin - 1);
+        renderUsuariosAdmin();
+      });
+    }
+    if (btnUsuariosPaginaProxima) {
+      btnUsuariosPaginaProxima.addEventListener('click', () => {
+        paginaUsuariosAdmin += 1;
+        renderUsuariosAdmin();
+      });
+    }
 
     dialog.addEventListener('click', (event) => {
       if (event.target === dialog) {
@@ -2904,6 +4204,14 @@
       }
     });
 
+    if (dialogUsuarioAcao) {
+      dialogUsuarioAcao.addEventListener('click', (event) => {
+        if (event.target === dialogUsuarioAcao) {
+          closeUsuarioAcaoDialog();
+        }
+      });
+    }
+
     window.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && !dialog.classList.contains('hidden')) {
         closeFormalizacaoDialog();
@@ -2929,6 +4237,9 @@
       if (event.key === 'Escape' && !dialogSalvarCliente.classList.contains('hidden')) {
         closeSalvarClienteDialog();
       }
+      if (event.key === 'Escape' && dialogUsuarioAcao && !dialogUsuarioAcao.classList.contains('hidden')) {
+        closeUsuarioAcaoDialog();
+      }
       if (event.key === 'Escape' && dialogDashboardCompleto && !dialogDashboardCompleto.classList.contains('hidden')) {
         fecharDashboardFullscreen();
       }
@@ -2936,8 +4247,37 @@
 
     buscaInvestimentosInput.addEventListener('input', (event) => {
       termoBuscaInvestimentos = event.target.value;
+      paginaInvestimentos = 1;
       aplicarBuscaInvestimentos();
     });
+
+    if (btnClientesPaginaAnterior) {
+      btnClientesPaginaAnterior.addEventListener('click', () => {
+        paginaClientes = Math.max(1, paginaClientes - 1);
+        renderClientes();
+      });
+    }
+
+    if (btnClientesPaginaProxima) {
+      btnClientesPaginaProxima.addEventListener('click', () => {
+        paginaClientes += 1;
+        renderClientes();
+      });
+    }
+
+    if (btnInvestimentosPaginaAnterior) {
+      btnInvestimentosPaginaAnterior.addEventListener('click', () => {
+        paginaInvestimentos = Math.max(1, paginaInvestimentos - 1);
+        aplicarBuscaInvestimentos();
+      });
+    }
+
+    if (btnInvestimentosPaginaProxima) {
+      btnInvestimentosPaginaProxima.addEventListener('click', () => {
+        paginaInvestimentos += 1;
+        aplicarBuscaInvestimentos();
+      });
+    }
 
     btnCarregarDashboardCompleto.addEventListener('click', async () => {
       await carregarDashboardCompleto();
@@ -3020,9 +4360,10 @@
 
     document.getElementById('msg-clientes').textContent = 'Ao entrar nesta tela, a lista e carregada automaticamente.';
     document.getElementById('msg-investimentos').textContent = 'Lista carregada automaticamente. Selecione um investimento para abrir o overview.';
+    limparFormularioUsuariosAdmin();
     atualizarVisibilidadeQuitarTotal();
     renderParcelasSimulacao([]);
-    carregarDashboard();
+    validarSessaoInicial();
   </script>
 </body>
 </html>

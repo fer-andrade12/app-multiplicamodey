@@ -33,6 +33,93 @@ docker compose up -d --build
 - Frontend: `http://localhost:3000`
 - Swagger: `http://localhost:8080/docs`
 
+## Acesso (login)
+
+- Autenticacao por email/senha em `POST /auth/login`
+- Perfis:
+	- `ADMIN`: acesso completo + criacao de usuarios
+	- `USUARIO`: visualizacao apenas das proprias parcelas/investimentos e dashboard da propria divida
+- Admin principal inicial via `.env`:
+	- `ADMIN_EMAIL` (padrao `admin@multiplicamoney.local`)
+	- `ADMIN_PASSWORD` (padrao `admin123456`)
+
+## Arquitetura e fluxos (Mermaid)
+
+### Visão geral Frontend ↔ Backend
+
+```mermaid
+flowchart LR
+	U[Usuário]
+	F[Frontend estático<br/>Nginx :3000]
+	A[API Express<br/>:8080]
+	D[(PostgreSQL :5432)]
+
+	U --> F
+	F -->|HTTP/JSON| A
+	A -->|SQL| D
+	D --> A
+	A --> F
+	F --> U
+```
+
+### Fluxo: criar cliente → endereço → investimento
+
+```mermaid
+sequenceDiagram
+	actor U as Usuário
+	participant F as Frontend
+	participant A as API Express
+	participant DB as PostgreSQL
+
+	U->>F: Preenche cadastro
+	F->>A: POST /clientes
+	A->>DB: INSERT clientes
+	DB-->>A: cliente(id)
+	A-->>F: 201 cliente
+
+	F->>A: POST /clientes/{id}/enderecos
+	A->>DB: INSERT enderecos
+	DB-->>A: endereco
+	A-->>F: 201 endereco
+
+	F->>A: POST /investimentos
+	A->>DB: INSERT investimentos + parcelas
+	DB-->>A: investimento criado
+	A-->>F: 201 investimento
+
+	F->>A: GET /dashboard/resumo
+	A->>DB: SELECT agregados
+	DB-->>A: métricas
+	A-->>F: 200 resumo
+```
+
+### Fluxo: pagamento e prorrogação de parcela
+
+```mermaid
+sequenceDiagram
+	actor U as Usuário
+	participant F as Frontend
+	participant A as API Express
+	participant DB as PostgreSQL
+
+	U->>F: Seleciona parcela e paga
+	F->>A: POST /investimentos/pagamentos
+	A->>DB: INSERT pagamentos + UPDATE saldo/status
+	DB-->>A: confirmação
+	A-->>F: 201 pagamento
+
+	U->>F: Solicita prorrogação
+	F->>A: POST /investimentos/parcelas/prorrogacoes
+	A->>DB: INSERT prorrogações + UPDATE vencimento/juros
+	DB-->>A: parcela atualizada
+	A-->>F: 200 prorrogação
+
+	F->>A: GET /investimentos/{id}/parcelas
+	A->>DB: SELECT parcelas
+	DB-->>A: cronograma atualizado
+	A-->>F: 200 parcelas
+```
+
 ## Visual do app
 
 <p align="center">

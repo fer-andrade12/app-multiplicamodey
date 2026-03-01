@@ -9,8 +9,132 @@ CREATE TABLE IF NOT EXISTS clientes (
   data_cadastro TIMESTAMP DEFAULT NOW()
 );
 
-ALTER TABLE clientes ADD COLUMN IF NOT EXISTS email TEXT;
-CREATE UNIQUE INDEX IF NOT EXISTS ux_clientes_email ON clientes(email);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_name = 'clientes'
+      AND column_name = 'email'
+  ) THEN
+    ALTER TABLE clientes ADD COLUMN email TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_indexes
+    WHERE schemaname = 'public'
+      AND tablename = 'clientes'
+      AND indexname = 'ux_clientes_email'
+  ) THEN
+    EXECUTE 'CREATE UNIQUE INDEX ux_clientes_email ON clientes(email)';
+  END IF;
+END$$;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+  id SERIAL PRIMARY KEY,
+  nome TEXT NOT NULL,
+  usuario TEXT,
+  email TEXT UNIQUE NOT NULL,
+  senha_hash TEXT NOT NULL,
+  perfil TEXT,
+  role TEXT NOT NULL CHECK (role IN ('ADMIN', 'USUARIO')),
+  cliente_id INTEGER NULL REFERENCES clientes(id) ON DELETE SET NULL,
+  ativo BOOLEAN NOT NULL DEFAULT TRUE,
+  data_cadastro TIMESTAMP DEFAULT NOW()
+);
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'email'
+  ) THEN
+    ALTER TABLE usuarios ADD COLUMN email TEXT;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'usuario'
+  ) THEN
+    ALTER TABLE usuarios ALTER COLUMN usuario DROP NOT NULL;
+    UPDATE usuarios SET email = lower(usuario) WHERE email IS NULL AND usuario IS NOT NULL;
+  ELSE
+    ALTER TABLE usuarios ADD COLUMN usuario TEXT;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'perfil'
+  ) THEN
+    ALTER TABLE usuarios ALTER COLUMN perfil DROP NOT NULL;
+  ELSE
+    ALTER TABLE usuarios ADD COLUMN perfil TEXT;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'role'
+  ) THEN
+    ALTER TABLE usuarios ADD COLUMN role TEXT;
+  END IF;
+
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'perfil'
+  ) THEN
+    UPDATE usuarios
+    SET role = CASE WHEN upper(perfil) = 'ADMIN' THEN 'ADMIN' ELSE 'USUARIO' END
+    WHERE role IS NULL;
+  END IF;
+
+  UPDATE usuarios
+  SET role = CASE WHEN upper(role) = 'ADMIN' THEN 'ADMIN' ELSE 'USUARIO' END
+  WHERE role IS NOT NULL;
+
+  UPDATE usuarios
+  SET usuario = COALESCE(usuario, email)
+  WHERE email IS NOT NULL;
+
+  UPDATE usuarios
+  SET perfil = CASE WHEN role = 'ADMIN' THEN 'ADMIN' ELSE 'OPERADOR' END
+  WHERE role IS NOT NULL;
+
+  UPDATE usuarios
+  SET role = 'ADMIN'
+  WHERE role IS NULL;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'cliente_id'
+  ) THEN
+    ALTER TABLE usuarios ADD COLUMN cliente_id INTEGER;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'usuarios_cliente_id_fkey'
+      AND conrelid = 'usuarios'::regclass
+  ) THEN
+    ALTER TABLE usuarios
+      ADD CONSTRAINT usuarios_cliente_id_fkey
+      FOREIGN KEY (cliente_id)
+      REFERENCES clientes(id)
+      ON DELETE SET NULL;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'ativo'
+  ) THEN
+    ALTER TABLE usuarios ADD COLUMN ativo BOOLEAN NOT NULL DEFAULT TRUE;
+  END IF;
+
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'data_cadastro'
+  ) THEN
+    ALTER TABLE usuarios ADD COLUMN data_cadastro TIMESTAMP DEFAULT NOW();
+  END IF;
+END$$;
+
+CREATE UNIQUE INDEX IF NOT EXISTS ux_usuarios_email ON usuarios(email);
+CREATE INDEX IF NOT EXISTS idx_usuarios_role ON usuarios(role);
+CREATE INDEX IF NOT EXISTS idx_usuarios_cliente_id ON usuarios(cliente_id);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_usuarios_cliente_unico ON usuarios(cliente_id) WHERE role = 'USUARIO' AND cliente_id IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS enderecos (
   id SERIAL PRIMARY KEY,

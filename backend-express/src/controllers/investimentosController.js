@@ -4,14 +4,29 @@ const investimentosService = require('../services/investimentosService');
 const byCliente = express.Router({ mergeParams: true });
 const investimentoCrud = express.Router();
 
+function isAdmin(req) {
+  return String(req.user?.role || '').toUpperCase() === 'ADMIN';
+}
+
+function isUsuario(req) {
+  return String(req.user?.role || '').toUpperCase() === 'USUARIO';
+}
+
+function usuarioClienteId(req) {
+  const id = Number(req.user?.cliente_id);
+  return Number.isInteger(id) && id > 0 ? id : null;
+}
+
 function parseId(value) {
   const id = Number(value);
   return Number.isInteger(id) && id > 0 ? id : null;
 }
 
-investimentoCrud.get('/', async (_req, res) => {
+investimentoCrud.get('/', async (req, res) => {
   try {
-    const investimentos = await investimentosService.listInvestimentos();
+    const investimentos = isUsuario(req)
+      ? await investimentosService.listInvestimentosByCliente(usuarioClienteId(req))
+      : await investimentosService.listInvestimentos();
     res.json(investimentos);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -19,6 +34,10 @@ investimentoCrud.get('/', async (_req, res) => {
 });
 
 investimentoCrud.post('/', async (req, res) => {
+  if (!isAdmin(req)) {
+    return res.status(403).json({ error: 'Apenas ADMIN pode criar investimentos.' });
+  }
+
   const clienteId = parseId(req.body.codicoCliente ?? req.body.codigoCliente);
   if (!clienteId) return res.status(400).json({ error: 'ID invalido' });
 
@@ -46,6 +65,10 @@ byCliente.get('/', async (req, res) => {
   const clienteId = parseId(req.params.codigoCliente);
   if (!clienteId) return res.status(400).json({ error: 'ID invalido' });
 
+  if (isUsuario(req) && clienteId !== usuarioClienteId(req)) {
+    return res.status(403).json({ error: 'USUARIO so pode visualizar os proprios investimentos.' });
+  }
+
   try {
     const investimentos = await investimentosService.listInvestimentosByCliente(clienteId);
     res.json(investimentos);
@@ -61,6 +84,9 @@ investimentoCrud.get('/:codigoInvestimento', async (req, res) => {
   try {
     const investimento = await investimentosService.getInvestimento(investimentoId);
     if (!investimento) return res.status(404).json({ error: 'Investimento nao encontrado' });
+    if (isUsuario(req) && Number(investimento.cliente_id) !== usuarioClienteId(req)) {
+      return res.status(403).json({ error: 'USUARIO so pode visualizar os proprios investimentos.' });
+    }
     res.json(investimento);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -74,6 +100,9 @@ investimentoCrud.get('/:codigoInvestimento/parcelas', async (req, res) => {
   try {
     const investimento = await investimentosService.getInvestimento(investimentoId);
     if (!investimento) return res.status(404).json({ error: 'Investimento nao encontrado' });
+    if (isUsuario(req) && Number(investimento.cliente_id) !== usuarioClienteId(req)) {
+      return res.status(403).json({ error: 'USUARIO so pode visualizar as proprias parcelas.' });
+    }
 
     const parcelas = await investimentosService.listParcelasInvestimento(investimentoId);
     res.json(parcelas);
@@ -83,6 +112,10 @@ investimentoCrud.get('/:codigoInvestimento/parcelas', async (req, res) => {
 });
 
 investimentoCrud.post('/pagamentos', async (req, res) => {
+  if (!isAdmin(req)) {
+    return res.status(403).json({ error: 'Apenas ADMIN pode registrar pagamentos.' });
+  }
+
   const investimentoId = parseId(req.body.codigoInvestimento);
   if (!investimentoId) return res.status(400).json({ error: 'ID invalido' });
 
@@ -100,6 +133,10 @@ investimentoCrud.post('/pagamentos', async (req, res) => {
 });
 
 investimentoCrud.post('/prorrogacoes', async (req, res) => {
+  if (!isAdmin(req)) {
+    return res.status(403).json({ error: 'Apenas ADMIN pode registrar prorrogacoes.' });
+  }
+
   const investimentoId = parseId(req.body.codigoInvestimento);
   if (!investimentoId) return res.status(400).json({ error: 'ID invalido' });
 
@@ -117,6 +154,10 @@ investimentoCrud.post('/prorrogacoes', async (req, res) => {
 });
 
 investimentoCrud.post('/parcelas/prorrogacoes', async (req, res) => {
+  if (!isAdmin(req)) {
+    return res.status(403).json({ error: 'Apenas ADMIN pode prorrogar parcelas.' });
+  }
+
   const investimentoId = parseId(req.body.codigoInvestimento);
   if (!investimentoId) return res.status(400).json({ error: 'ID invalido' });
 

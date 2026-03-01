@@ -64,6 +64,33 @@ API: http://localhost:8080
 Swagger: http://localhost:8080/docs
 Frontend (Nginx): http://localhost:3000
 
+## Autenticacao e perfis
+
+- Login via `POST /auth/login` com `email` e `senha`
+- Perfil `ADMIN`: acesso total e criacao de usuarios
+- Perfil `USUARIO`: apenas leitura de parcelas/investimentos e dashboard do proprio cliente
+
+Admin principal inicial (bootstrap automatico):
+
+- Email: `ADMIN_EMAIL` (padrao `admin@multiplicamoney.local`)
+- Senha: `ADMIN_PASSWORD` (padrao `admin123456`)
+
+Criacao de usuario por ADMIN:
+
+- `POST /auth/usuarios` (Bearer token ADMIN)
+- Payload: `nome`, `email`, `senha`, `role` (`ADMIN` ou `USUARIO`), `cliente_id` (obrigatorio para `USUARIO`)
+
+Gestao de usuarios por ADMIN:
+
+- `GET /auth/usuarios`
+- `PUT /auth/usuarios/:codigoUsuario`
+- `DELETE /auth/usuarios/:codigoUsuario`
+- `PUT /auth/usuarios/:codigoUsuario/senha` (body: `nova_senha`)
+
+Troca de senha do usuario autenticado:
+
+- `PUT /auth/minha-senha` (body: `senha_atual`, `nova_senha`)
+
 ## SQL inicial (tabelas)
 
 Se voce ja tinha a estrutura antiga (emprestimos/investimentos), recrie as tabelas:

@@ -18,6 +18,19 @@ async function findClienteById(id) {
   return result.rows[0];
 }
 
+async function findClienteByCpf(cpf) {
+  const result = await pool.query('SELECT * FROM clientes WHERE cpf = $1 LIMIT 1', [cpf]);
+  return result.rows[0] || null;
+}
+
+async function findClientesByCpfPrefix(cpfPrefix, limit = 20) {
+  const result = await pool.query(
+    'SELECT * FROM clientes WHERE cpf LIKE $1 ORDER BY cpf ASC LIMIT $2',
+    [`${cpfPrefix}%`, limit]
+  );
+  return result.rows;
+}
+
 async function updateCliente(id, data) {
   const result = await pool.query(
     'UPDATE clientes SET nome = $1, email = $2, cpf = $3, rg = $4, renda_mensal = $5, tipo_trabalho = $6 WHERE id = $7 RETURNING *',
@@ -31,4 +44,12 @@ async function deleteCliente(id) {
   return result.rowCount > 0;
 }
 
-module.exports = { createCliente, listClientes, findClienteById, updateCliente, deleteCliente };
+module.exports = {
+  createCliente,
+  listClientes,
+  findClienteById,
+  findClienteByCpf,
+  findClientesByCpfPrefix,
+  updateCliente,
+  deleteCliente,
+};

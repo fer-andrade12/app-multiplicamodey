@@ -1,22 +1,57 @@
 const { pool } = require('../repositories/db');
 
-async function calcularResumo() {
-  const resumo = await pool.query(`
-    SELECT
-      COALESCE((SELECT SUM(valor_principal) FROM investimentos), 0) AS total_investido,
-      COALESCE((SELECT SUM(valor_juros) FROM investimentos), 0) AS total_lucro_previsto,
-      COALESCE((SELECT SUM(saldo_devedor) FROM investimentos WHERE status != 'QUITADO'), 0) AS total_a_receber,
-      COALESCE((SELECT SUM(valor) FROM pagamentos), 0) AS total_recebido,
-      COALESCE((SELECT SUM(valor) FROM parcelas WHERE status = 'PENDENTE' AND vencimento < NOW()), 0) AS total_vencido,
-      COALESCE((
-        SELECT COUNT(DISTINCT i.cliente_id)
-        FROM investimentos i
-        JOIN parcelas p ON p.investimento_id = i.id
-        WHERE p.status = 'PENDENTE'
-          AND p.vencimento < NOW()
-          AND i.status != 'QUITADO'
-      ), 0) AS clientes_em_atraso
-  `);
+async function calcularResumo(clienteId = null) {
+  const scoped = Number.isInteger(Number(clienteId)) && Number(clienteId) > 0;
+
+  const resumo = scoped
+    ? await pool.query(
+      `
+        SELECT
+          COALESCE((SELECT SUM(valor_principal) FROM investimentos WHERE cliente_id = $1), 0) AS total_investido,
+          COALESCE((SELECT SUM(valor_juros) FROM investimentos WHERE cliente_id = $1), 0) AS total_lucro_previsto,
+          COALESCE((SELECT SUM(saldo_devedor) FROM investimentos WHERE status != 'QUITADO' AND cliente_id = $1), 0) AS total_a_receber,
+          COALESCE((
+            SELECT SUM(p.valor)
+            FROM pagamentos p
+            JOIN investimentos i ON i.id = p.investimento_id
+            WHERE i.cliente_id = $1
+          ), 0) AS total_recebido,
+          COALESCE((
+            SELECT SUM(p.valor)
+            FROM parcelas p
+            JOIN investimentos i ON i.id = p.investimento_id
+            WHERE p.status = 'PENDENTE'
+              AND p.vencimento < NOW()
+              AND i.cliente_id = $1
+          ), 0) AS total_vencido,
+          COALESCE((
+            SELECT COUNT(DISTINCT i.cliente_id)
+            FROM investimentos i
+            JOIN parcelas p ON p.investimento_id = i.id
+            WHERE p.status = 'PENDENTE'
+              AND p.vencimento < NOW()
+              AND i.status != 'QUITADO'
+              AND i.cliente_id = $1
+          ), 0) AS clientes_em_atraso
+      `,
+      [Number(clienteId)]
+    )
+    : await pool.query(`
+      SELECT
+        COALESCE((SELECT SUM(valor_principal) FROM investimentos), 0) AS total_investido,
+        COALESCE((SELECT SUM(valor_juros) FROM investimentos), 0) AS total_lucro_previsto,
+        COALESCE((SELECT SUM(saldo_devedor) FROM investimentos WHERE status != 'QUITADO'), 0) AS total_a_receber,
+        COALESCE((SELECT SUM(valor) FROM pagamentos), 0) AS total_recebido,
+        COALESCE((SELECT SUM(valor) FROM parcelas WHERE status = 'PENDENTE' AND vencimento < NOW()), 0) AS total_vencido,
+        COALESCE((
+          SELECT COUNT(DISTINCT i.cliente_id)
+          FROM investimentos i
+          JOIN parcelas p ON p.investimento_id = i.id
+          WHERE p.status = 'PENDENTE'
+            AND p.vencimento < NOW()
+            AND i.status != 'QUITADO'
+        ), 0) AS clientes_em_atraso
+    `);
 
   const totalInvestidoVal = Number(resumo.rows[0].total_investido);
   const totalLucroPrevistoVal = Number(resumo.rows[0].total_lucro_previsto);
@@ -42,32 +77,73 @@ async function calcularResumo() {
   };
 }
 
-async function calcularCompleto() {
-  const totais = await pool.query(`
-    SELECT
-      COALESCE((SELECT SUM(valor_principal) FROM investimentos), 0) AS total_investido,
-      COALESCE((SELECT SUM(valor_juros) FROM investimentos), 0) AS lucro_total,
-      COALESCE((SELECT SUM(valor) FROM pagamentos), 0) AS receita_bruta,
-      COALESCE((SELECT SUM(saldo_devedor) FROM investimentos WHERE status != 'QUITADO'), 0) AS total_em_aberto,
-      COALESCE((SELECT COUNT(*) FROM clientes), 0) AS total_clientes,
-      COALESCE((
-        SELECT COUNT(DISTINCT i.cliente_id)
-        FROM investimentos i
-        JOIN parcelas p ON p.investimento_id = i.id
-        WHERE p.status = 'PENDENTE'
-          AND p.vencimento < NOW()
-          AND i.status != 'QUITADO'
-      ), 0) AS clientes_em_atraso
-  `);
+async function calcularCompleto(clienteId = null) {
+  const scoped = Number.isInteger(Number(clienteId)) && Number(clienteId) > 0;
 
-  const volumeClientesMes = await pool.query(`
-    SELECT
-      TO_CHAR(DATE_TRUNC('month', data_cadastro), 'YYYY-MM') AS referencia,
-      COUNT(*)::INTEGER AS quantidade
-    FROM clientes
-    GROUP BY 1
-    ORDER BY 1 DESC
-  `);
+  const totais = scoped
+    ? await pool.query(
+      `
+        SELECT
+          COALESCE((SELECT SUM(valor_principal) FROM investimentos WHERE cliente_id = $1), 0) AS total_investido,
+          COALESCE((SELECT SUM(valor_juros) FROM investimentos WHERE cliente_id = $1), 0) AS lucro_total,
+          COALESCE((
+            SELECT SUM(p.valor)
+            FROM pagamentos p
+            JOIN investimentos i ON i.id = p.investimento_id
+            WHERE i.cliente_id = $1
+          ), 0) AS receita_bruta,
+          COALESCE((SELECT SUM(saldo_devedor) FROM investimentos WHERE status != 'QUITADO' AND cliente_id = $1), 0) AS total_em_aberto,
+          COALESCE((SELECT COUNT(*)::INTEGER FROM clientes WHERE id = $1), 0) AS total_clientes,
+          COALESCE((
+            SELECT COUNT(DISTINCT i.cliente_id)
+            FROM investimentos i
+            JOIN parcelas p ON p.investimento_id = i.id
+            WHERE p.status = 'PENDENTE'
+              AND p.vencimento < NOW()
+              AND i.status != 'QUITADO'
+              AND i.cliente_id = $1
+          ), 0) AS clientes_em_atraso
+      `,
+      [Number(clienteId)]
+    )
+    : await pool.query(`
+      SELECT
+        COALESCE((SELECT SUM(valor_principal) FROM investimentos), 0) AS total_investido,
+        COALESCE((SELECT SUM(valor_juros) FROM investimentos), 0) AS lucro_total,
+        COALESCE((SELECT SUM(valor) FROM pagamentos), 0) AS receita_bruta,
+        COALESCE((SELECT SUM(saldo_devedor) FROM investimentos WHERE status != 'QUITADO'), 0) AS total_em_aberto,
+        COALESCE((SELECT COUNT(*) FROM clientes), 0) AS total_clientes,
+        COALESCE((
+          SELECT COUNT(DISTINCT i.cliente_id)
+          FROM investimentos i
+          JOIN parcelas p ON p.investimento_id = i.id
+          WHERE p.status = 'PENDENTE'
+            AND p.vencimento < NOW()
+            AND i.status != 'QUITADO'
+        ), 0) AS clientes_em_atraso
+    `);
+
+  const volumeClientesMes = scoped
+    ? await pool.query(
+      `
+        SELECT
+          TO_CHAR(DATE_TRUNC('month', data_cadastro), 'YYYY-MM') AS referencia,
+          COUNT(*)::INTEGER AS quantidade
+        FROM clientes
+        WHERE id = $1
+        GROUP BY 1
+        ORDER BY 1 DESC
+      `,
+      [Number(clienteId)]
+    )
+    : await pool.query(`
+      SELECT
+        TO_CHAR(DATE_TRUNC('month', data_cadastro), 'YYYY-MM') AS referencia,
+        COUNT(*)::INTEGER AS quantidade
+      FROM clientes
+      GROUP BY 1
+      ORDER BY 1 DESC
+    `);
 
   const totalInvestidoVal = Number(totais.rows[0].total_investido);
   const lucroTotalVal = Number(totais.rows[0].lucro_total);
