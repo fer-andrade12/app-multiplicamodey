@@ -69,6 +69,7 @@ Frontend (Nginx): http://localhost:3000
 - Login via `POST /auth/login` com `email` e `senha`
 - Perfil `ADMIN`: acesso total e criacao de usuarios
 - Perfil `USUARIO`: apenas leitura de parcelas/investimentos e dashboard do proprio cliente
+- Perfil `VISUALIZADOR`: acesso somente leitura aos recursos administrativos de consulta (sem criar/editar/excluir)
 
 Admin principal inicial (bootstrap automatico):
 
@@ -78,7 +79,7 @@ Admin principal inicial (bootstrap automatico):
 Criacao de usuario por ADMIN:
 
 - `POST /auth/usuarios` (Bearer token ADMIN)
-- Payload: `nome`, `email`, `senha`, `role` (`ADMIN` ou `USUARIO`), `cliente_id` (obrigatorio para `USUARIO`)
+- Payload: `nome`, `email`, `senha`, `role` (`ADMIN`, `USUARIO` ou `VISUALIZADOR`), `cliente_id` (obrigatorio para `USUARIO`)
 
 Gestao de usuarios por ADMIN:
 

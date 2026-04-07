@@ -14,7 +14,7 @@ const calculadoraController = require('./controllers/calculadoraController');
 const dashboardController = require('./controllers/dashboardController');
 const simulacaoController = require('./controllers/simulacaoController');
 const authService = require('./services/authService');
-const { requireAuth, requireRole } = require('./middlewares/authMiddleware');
+const { requireAuth, requireRole, requireReadOnlyForRoles } = require('./middlewares/authMiddleware');
 
 const app = express();
 app.use(cors());
@@ -623,11 +623,11 @@ app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use('/', healthController);
 app.use('/auth', authController);
-app.use('/clientes', requireAuth, requireRole('ADMIN'), clientesController);
+app.use('/clientes', requireAuth, requireRole('ADMIN', 'VISUALIZADOR'), requireReadOnlyForRoles('VISUALIZADOR'), clientesController);
 app.use('/simulacoes', requireAuth, requireRole('ADMIN'), simulacaoController);
 app.use('/clientes/:codigoCliente/investimentos', requireAuth, investimentosController.byCliente);
 app.use('/investimentos', requireAuth, investimentosController.investimentoCrud);
-app.use('/calculadora', requireAuth, requireRole('ADMIN'), calculadoraController);
+app.use('/calculadora', requireAuth, requireRole('ADMIN', 'VISUALIZADOR'), calculadoraController);
 app.use('/dashboard', requireAuth, dashboardController);
 
 const port = Number(process.env.PORT || 8080);

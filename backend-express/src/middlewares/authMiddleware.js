@@ -42,7 +42,21 @@ function requireRole(...allowedRoles) {
   };
 }
 
+function requireReadOnlyForRoles(...readOnlyRoles) {
+  const readOnly = new Set(readOnlyRoles.map((role) => String(role || '').toUpperCase()));
+  const safeMethods = new Set(['GET', 'HEAD', 'OPTIONS']);
+
+  return (req, res, next) => {
+    const userRole = String(req.user?.role || '').toUpperCase();
+    if (readOnly.has(userRole) && !safeMethods.has(String(req.method || '').toUpperCase())) {
+      return res.status(403).json({ error: 'Perfil com permissao somente visualizacao.' });
+    }
+    return next();
+  };
+}
+
 module.exports = {
   requireAuth,
   requireRole,
+  requireReadOnlyForRoles,
 };

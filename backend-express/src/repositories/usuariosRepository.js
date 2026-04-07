@@ -31,6 +31,8 @@ async function countAdminsAtivosExcept(exceptUserId = null) {
 }
 
 async function createUsuario(data) {
+  const perfil = data.role === 'ADMIN' ? 'ADMIN' : 'OPERADOR';
+
   const result = await pool.query(
     'INSERT INTO usuarios (nome, usuario, email, senha_hash, perfil, role, cliente_id, ativo) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id, nome, email, role, cliente_id, ativo, data_cadastro',
     [
@@ -38,7 +40,7 @@ async function createUsuario(data) {
       data.email,
       data.email,
       data.senha_hash,
-      data.role === 'ADMIN' ? 'ADMIN' : 'OPERADOR',
+      perfil,
       data.role,
       data.cliente_id ?? null,
       data.ativo ?? true,
@@ -55,6 +57,8 @@ async function listUsuarios() {
 }
 
 async function updateUsuario(id, data) {
+  const perfil = data.role === 'ADMIN' ? 'ADMIN' : 'OPERADOR';
+
   const result = await pool.query(
     `
       UPDATE usuarios
@@ -73,7 +77,7 @@ async function updateUsuario(id, data) {
       data.nome,
       data.email,
       data.email,
-      data.role === 'ADMIN' ? 'ADMIN' : 'OPERADOR',
+      perfil,
       data.role,
       data.cliente_id ?? null,
       data.ativo,

@@ -30,7 +30,9 @@ function sanitizeUsuario(usuario) {
 
 function validarRole(role) {
   const normalized = normalizarTexto(role).toUpperCase();
-  return normalized === 'ADMIN' || normalized === 'USUARIO' ? normalized : null;
+  return normalized === 'ADMIN' || normalized === 'USUARIO' || normalized === 'VISUALIZADOR'
+    ? normalized
+    : null;
 }
 
 async function resolverClientePorCpf(cpfEntrada) {

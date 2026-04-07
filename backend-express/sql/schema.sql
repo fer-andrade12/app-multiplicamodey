@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS usuarios (
   email TEXT UNIQUE NOT NULL,
   senha_hash TEXT NOT NULL,
   perfil TEXT,
-  role TEXT NOT NULL CHECK (role IN ('ADMIN', 'USUARIO')),
+  role TEXT NOT NULL CHECK (role IN ('ADMIN', 'USUARIO', 'VISUALIZADOR')),
   cliente_id INTEGER NULL REFERENCES clientes(id) ON DELETE SET NULL,
   ativo BOOLEAN NOT NULL DEFAULT TRUE,
   data_cadastro TIMESTAMP DEFAULT NOW()
@@ -79,12 +79,20 @@ BEGIN
     SELECT 1 FROM information_schema.columns WHERE table_name = 'usuarios' AND column_name = 'perfil'
   ) THEN
     UPDATE usuarios
-    SET role = CASE WHEN upper(perfil) = 'ADMIN' THEN 'ADMIN' ELSE 'USUARIO' END
+    SET role = CASE
+      WHEN upper(perfil) = 'ADMIN' THEN 'ADMIN'
+      WHEN upper(perfil) IN ('VISUALIZADOR', 'VISUALIZACAO', 'LEITURA') THEN 'VISUALIZADOR'
+      ELSE 'USUARIO'
+    END
     WHERE role IS NULL;
   END IF;
 
   UPDATE usuarios
-  SET role = CASE WHEN upper(role) = 'ADMIN' THEN 'ADMIN' ELSE 'USUARIO' END
+  SET role = CASE
+    WHEN upper(role) = 'ADMIN' THEN 'ADMIN'
+    WHEN upper(role) = 'VISUALIZADOR' THEN 'VISUALIZADOR'
+    ELSE 'USUARIO'
+  END
   WHERE role IS NOT NULL;
 
   UPDATE usuarios
@@ -92,8 +100,24 @@ BEGIN
   WHERE email IS NOT NULL;
 
   UPDATE usuarios
-  SET perfil = CASE WHEN role = 'ADMIN' THEN 'ADMIN' ELSE 'OPERADOR' END
+  SET perfil = CASE
+    WHEN role = 'ADMIN' THEN 'ADMIN'
+    ELSE 'OPERADOR'
+  END
   WHERE role IS NOT NULL;
+
+  IF EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'usuarios_role_check'
+      AND conrelid = 'usuarios'::regclass
+  ) THEN
+    ALTER TABLE usuarios DROP CONSTRAINT usuarios_role_check;
+  END IF;
+
+  ALTER TABLE usuarios
+    ADD CONSTRAINT usuarios_role_check
+    CHECK (role IN ('ADMIN', 'USUARIO', 'VISUALIZADOR'));
 
   UPDATE usuarios
   SET role = 'ADMIN'
