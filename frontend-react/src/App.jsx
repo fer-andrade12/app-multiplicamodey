@@ -108,8 +108,24 @@ const pagamentosRecentes = [
   { title: 'Pagamento #1040', subtitle: 'Confirmado em 02/07/2024', meta: currency.format(6850) }
 ];
 
+const dashboardPizza = [
+  { label: 'Adimplente', value: 64, color: '#22c55e' },
+  { label: 'Em risco', value: 23, color: '#f59e0b' },
+  { label: 'Atrasado', value: 13, color: '#ef4444' }
+];
+
+const dashboardColunas = [
+  { mes: 'Jan', valor: 142000 },
+  { mes: 'Fev', valor: 158000 },
+  { mes: 'Mar', valor: 171000 },
+  { mes: 'Abr', valor: 149000 },
+  { mes: 'Mai', valor: 189000 },
+  { mes: 'Jun', valor: 205000 }
+];
+
 export default function App() {
   const [isFormalizacaoOpen, setIsFormalizacaoOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [formalizacaoStatus, setFormalizacaoStatus] = useState('');
   const [simulacaoForm, setSimulacaoForm] = useState({
     clienteNome: '',
@@ -124,6 +140,7 @@ export default function App() {
     const onEsc = (event) => {
       if (event.key === 'Escape') {
         setIsFormalizacaoOpen(false);
+        setIsDashboardOpen(false);
       }
     };
 
@@ -165,6 +182,22 @@ export default function App() {
     setIsFormalizacaoOpen(false);
     setFormalizacaoStatus('Contratacao formalizada com sucesso. A operacao segue para assinatura digital.');
   };
+
+  const totalPizza = dashboardPizza.reduce((acc, item) => acc + item.value, 0);
+  const pizzaStops = dashboardPizza
+    .reduce(
+      (acc, item) => {
+        const start = acc.offset;
+        const nextOffset = start + (item.value / totalPizza) * 100;
+        acc.parts.push(`${item.color} ${start}% ${nextOffset}%`);
+        return { offset: nextOffset, parts: acc.parts };
+      },
+      { offset: 0, parts: [] }
+    )
+    .parts
+    .join(', ');
+
+  const maxColuna = Math.max(...dashboardColunas.map((item) => item.valor));
 
   return (
     <div className="min-h-screen bg-sand text-ink">
@@ -208,6 +241,7 @@ export default function App() {
             </p>
             <div className="flex flex-wrap gap-3">
               <Button>Explorar carteira</Button>
+              <Button variant="subtle" onClick={() => setIsDashboardOpen(true)}>Visualizar dashboard</Button>
               <Button variant="subtle">Ver detalhes do contrato</Button>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -534,6 +568,60 @@ export default function App() {
             <div className="mt-6 flex justify-end gap-3">
               <Button variant="ghost" onClick={() => setIsFormalizacaoOpen(false)}>Cancelar</Button>
               <Button onClick={confirmarFormalizacao}>Confirmar formalizacao</Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {isDashboardOpen ? (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/70 p-4 sm:p-8">
+          <div className="mx-auto min-h-full w-full max-w-6xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8">
+            <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-2xl font-semibold text-ink">Dashboard completo</h3>
+                <p className="text-sm text-slate-500">Visao analitica com distribuicao de risco e performance mensal.</p>
+              </div>
+              <Button variant="ghost" onClick={() => setIsDashboardOpen(false)}>Fechar dashboard</Button>
+            </div>
+
+            <div className="grid gap-6 lg:grid-cols-2">
+              <Card title="Distribuicao da carteira (pizza)">
+                <div className="flex flex-col items-center gap-6 py-4 sm:flex-row sm:items-start">
+                  <div
+                    className="h-52 w-52 rounded-full"
+                    style={{
+                      background: `conic-gradient(${pizzaStops})`
+                    }}
+                  />
+                  <div className="w-full space-y-3">
+                    {dashboardPizza.map((item) => (
+                      <div key={item.label} className="flex items-center justify-between rounded-2xl border border-slate-100 px-3 py-2 text-sm">
+                        <div className="flex items-center gap-2">
+                          <span className="h-3 w-3 rounded-full" style={{ backgroundColor: item.color }} />
+                          <span className="text-slate-600">{item.label}</span>
+                        </div>
+                        <span className="font-semibold text-ink">{item.value}%</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Card>
+
+              <Card title="Receita mensal (colunas)">
+                <div className="flex h-64 items-end justify-between gap-3 px-2 py-4">
+                  {dashboardColunas.map((item) => (
+                    <div key={item.mes} className="flex flex-1 flex-col items-center gap-2">
+                      <div
+                        className="w-full max-w-12 rounded-t-xl bg-primary-500"
+                        style={{ height: `${Math.max(16, (item.valor / maxColuna) * 100)}%` }}
+                        title={`${item.mes}: ${currency.format(item.valor)}`}
+                      />
+                      <span className="text-xs font-semibold text-slate-500">{item.mes}</span>
+                    </div>
+                  ))}
+                </div>
+                <p className="text-xs text-slate-500">Maior volume no periodo: {currency.format(maxColuna)}</p>
+              </Card>
             </div>
           </div>
         </div>

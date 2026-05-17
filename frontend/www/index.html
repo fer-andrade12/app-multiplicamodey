@@ -124,6 +124,10 @@
 
     .tab.active { display: block; }
 
+    body.dashboard-focus #kpi-grid {
+      display: none;
+    }
+
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -319,6 +323,102 @@
       animation: fadeIn 0.2s ease-out;
     }
 
+    .dashboard-fullscreen-card {
+      max-width: 1200px;
+      min-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .dashboard-fullscreen-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .dashboard-charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 14px;
+    }
+
+    .pizza-chart {
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      border: 1px solid rgba(168, 85, 247, 0.35);
+      background: radial-gradient(circle at center, rgba(17, 24, 39, 0.22) 0 54%, transparent 55% 100%);
+      margin: 8px auto;
+    }
+
+    .pizza-legend {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .pizza-legend-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(124,58,237,0.35);
+      background: rgba(124,58,237,0.1);
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .legend-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .bar-chart {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+      align-items: end;
+      gap: 10px;
+      min-height: 240px;
+      margin-top: 8px;
+    }
+
+    .bar-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .bar {
+      width: 100%;
+      max-width: 44px;
+      border-radius: 12px 12px 6px 6px;
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      border: 1px solid rgba(168,85,247,0.5);
+      min-height: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.25);
+    }
+
+    .bar-label {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .dialog-title {
       margin: 0;
       color: #f5f3ff;
@@ -482,10 +582,10 @@
     <div>
       <h1>MultiplicaMoney</h1>
     </div>
-    <div class="badge">API ativa em 8080</div>
+    <div class="badge">Sistema Ativo</div>
   </header>
 
-  <div class="grid">
+  <div id="kpi-grid" class="grid">
     <div class="card">
       <h2>Total investido</h2>
       <div id="kpi-investido" class="metric">R$ 0,00</div>
@@ -787,6 +887,56 @@
     </div>
   </div>
 
+  <div id="dashboard-completo-fullscreen" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="dashboard-fullscreen-title">
+    <div class="dialog-card dashboard-fullscreen-card">
+      <div class="dashboard-fullscreen-header">
+        <div>
+          <h3 id="dashboard-fullscreen-title" class="dialog-title">Dashboard completo</h3>
+          <p class="dialog-body" style="margin: 4px 0 0 0;">Visualizacao em tela inteira com graficos de pizza e colunas.</p>
+        </div>
+        <button id="btn-fechar-dashboard-fullscreen" class="ghost">Fechar</button>
+      </div>
+
+      <div class="card">
+        <h2>Resumo executivo</h2>
+        <div class="grid" style="margin-top: 10px; margin-bottom: 0;">
+          <div class="card">
+            <h2>Total investido</h2>
+            <div id="fs-kpi-investido" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Total em aberto</h2>
+            <div id="fs-kpi-aberto" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Total vencido</h2>
+            <div id="fs-kpi-vencido" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Lucro real</h2>
+            <div id="fs-kpi-lucro" class="metric">R$ 0,00</div>
+          </div>
+          <div class="card">
+            <h2>Clientes em atraso</h2>
+            <div id="fs-kpi-clientes-atraso" class="metric">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-charts-grid">
+        <div class="card">
+          <h2>Distribuicao financeira (pizza)</h2>
+          <div id="chart-dashboard-pizza" class="pizza-chart"></div>
+          <div id="chart-dashboard-pizza-legenda" class="pizza-legend"></div>
+        </div>
+        <div class="card">
+          <h2>Volume de clientes por mes (colunas)</h2>
+          <div id="chart-dashboard-colunas" class="bar-chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div id="excluir-cliente-dialog" class="dialog-overlay hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="excluir-cliente-dialog-title">
     <div class="dialog-card">
       <h3 id="excluir-cliente-dialog-title" class="dialog-title">Confirmar exclusao de cliente</h3>
@@ -926,11 +1076,17 @@
     };
 
     function abrirTab(nomeTab) {
+      document.body.classList.toggle('dashboard-focus', nomeTab === 'dashboard-completo');
+
       tabButtons.forEach((b) => b.classList.toggle('active', b.dataset.tab === nomeTab));
       Object.entries(tabs).forEach(([key, value]) => {
         if (!value) return;
         value.classList.toggle('active', key === nomeTab);
       });
+
+      if (nomeTab !== 'dashboard-completo') {
+        fecharDashboardFullscreen();
+      }
 
       if (nomeTab === 'clientes-lista') {
         carregarClientes();
@@ -991,6 +1147,16 @@
     const btnCarregarDashboardCompleto = document.getElementById('btn-carregar-dashboard-completo');
     const msgDashboardCompleto = document.getElementById('msg-dashboard-completo');
     const listaDashboardClientesMes = document.getElementById('lista-dashboard-clientes-mes');
+    const dialogDashboardCompleto = document.getElementById('dashboard-completo-fullscreen');
+    const btnFecharDashboardFullscreen = document.getElementById('btn-fechar-dashboard-fullscreen');
+    const chartDashboardPizza = document.getElementById('chart-dashboard-pizza');
+    const chartDashboardPizzaLegenda = document.getElementById('chart-dashboard-pizza-legenda');
+    const chartDashboardColunas = document.getElementById('chart-dashboard-colunas');
+    const fsKpiInvestido = document.getElementById('fs-kpi-investido');
+    const fsKpiAberto = document.getElementById('fs-kpi-aberto');
+    const fsKpiVencido = document.getElementById('fs-kpi-vencido');
+    const fsKpiLucro = document.getElementById('fs-kpi-lucro');
+    const fsKpiClientesAtraso = document.getElementById('fs-kpi-clientes-atraso');
     const detalhesInvestimento = document.getElementById('detalhes-investimento');
     const detalhesParcelaOverview = document.getElementById('detalhes-parcela-overview');
     const msgParcelaOverview = document.getElementById('msg-parcela-overview');
@@ -1966,20 +2132,39 @@
             ...ultimaSimulacao.payload,
           }),
         });
-        const novoInvestimentoId = Number(result?.investimento?.id);
+        const novoInvestimentoIdResposta = Number(
+          result?.investimento?.id
+          ?? result?.id
+          ?? result?.codigoInvestimento
+          ?? result?.investimento_id
+        );
         closeFormalizacaoDialog();
         limparEstadoSimulacao({
-          mensagem: `Contrato formalizado. Investimento ${result.investimento.id}`,
+          mensagem: `Contrato formalizado com sucesso.`,
           limparCampos: true,
         });
         await carregarDashboard();
 
-        if (Number.isFinite(novoInvestimentoId) && novoInvestimentoId > 0) {
-          termoBuscaInvestimentos = String(novoInvestimentoId);
+        let investimentoIdAlvo = Number.isFinite(novoInvestimentoIdResposta) && novoInvestimentoIdResposta > 0
+          ? novoInvestimentoIdResposta
+          : null;
+
+        await carregarInvestimentosTodos();
+
+        if (!investimentoIdAlvo) {
+          investimentoIdAlvo = Number(investimentosCache?.[0]?.id || 0) || null;
+        }
+
+        if (investimentoIdAlvo) {
+          termoBuscaInvestimentos = String(investimentoIdAlvo);
           buscaInvestimentosInput.value = termoBuscaInvestimentos;
           await carregarInvestimentosTodos();
-          selecionarInvestimento(novoInvestimentoId, true);
-          msgInvestimentos.textContent = `Investimento ${novoInvestimentoId} formalizado e aberto no overview.`;
+          await selecionarInvestimento(investimentoIdAlvo, true);
+          abrirTab('investimento-overview');
+          msgInvestimentos.textContent = `Investimento ${investimentoIdAlvo} formalizado e aberto no overview.`;
+        } else {
+          abrirTab('investimentos');
+          msgInvestimentos.textContent = 'Contrato formalizado, mas nao foi possivel identificar o ID para abrir o overview automaticamente.';
         }
       } catch (err) {
         document.getElementById('msg-simulacao').textContent = err.error || 'Falha ao formalizar.';
@@ -2037,6 +2222,83 @@
       });
     }
 
+    function abrirDashboardFullscreen() {
+      if (!dialogDashboardCompleto) return;
+      dialogDashboardCompleto.classList.remove('hidden');
+      dialogDashboardCompleto.setAttribute('aria-hidden', 'false');
+    }
+
+    function fecharDashboardFullscreen() {
+      if (!dialogDashboardCompleto) return;
+      dialogDashboardCompleto.classList.add('hidden');
+      dialogDashboardCompleto.setAttribute('aria-hidden', 'true');
+    }
+
+    function renderizarGraficosDashboardCompleto(data = {}) {
+      if (!chartDashboardPizza || !chartDashboardPizzaLegenda || !chartDashboardColunas) return;
+
+      const fatias = [
+        { label: 'Lucro recebido', valor: Number(data.lucro_recebido || 0), cor: '#22d3ee' },
+        { label: 'Lucro a receber', valor: Number(data.lucro_a_receber || 0), cor: '#a855f7' },
+        { label: 'Total vencido', valor: Number(data.total_vencido || 0), cor: '#f97316' }
+      ];
+
+      const somaPizza = fatias.reduce((acc, item) => acc + Math.max(0, item.valor), 0);
+      if (somaPizza > 0) {
+        let acumulado = 0;
+        const stops = fatias
+          .map((item) => {
+            const inicio = acumulado;
+            acumulado += (Math.max(0, item.valor) / somaPizza) * 100;
+            return `${item.cor} ${inicio}% ${acumulado}%`;
+          })
+          .join(', ');
+        chartDashboardPizza.style.background = `conic-gradient(${stops})`;
+      } else {
+        chartDashboardPizza.style.background = 'radial-gradient(circle at center, rgba(17, 24, 39, 0.22) 0 54%, transparent 55% 100%)';
+      }
+
+      chartDashboardPizzaLegenda.innerHTML = '';
+      fatias.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'pizza-legend-item';
+        row.innerHTML = `
+          <span class="legend-left"><span class="legend-dot" style="background:${item.cor}"></span>${item.label}</span>
+          <strong>${formatMoney(item.valor)}</strong>
+        `;
+        chartDashboardPizzaLegenda.appendChild(row);
+      });
+
+      const volume = Array.isArray(data.volume_clientes_mes) ? data.volume_clientes_mes : [];
+      chartDashboardColunas.innerHTML = '';
+      if (!volume.length) {
+        chartDashboardColunas.innerHTML = '<div class="notice">Sem dados para grafico de colunas.</div>';
+        return;
+      }
+
+      const maximo = Math.max(...volume.map((item) => Number(item.quantidade || 0)), 1);
+      volume.forEach((item) => {
+        const quantidade = Number(item.quantidade || 0);
+        const altura = Math.max(10, (quantidade / maximo) * 180);
+
+        const wrap = document.createElement('div');
+        wrap.className = 'bar-wrap';
+        wrap.innerHTML = `
+          <div class="bar" style="height:${altura}px" title="${formatReferenciaMes(item.referencia)}: ${quantidade} clientes"></div>
+          <div class="bar-label">${formatReferenciaMes(item.referencia)}<br><strong>${quantidade}</strong></div>
+        `;
+        chartDashboardColunas.appendChild(wrap);
+      });
+    }
+
+    function preencherResumoFullscreen() {
+      if (fsKpiInvestido) fsKpiInvestido.textContent = document.getElementById('kpi-investido')?.textContent || 'R$ 0,00';
+      if (fsKpiAberto) fsKpiAberto.textContent = document.getElementById('kpi-aberto')?.textContent || 'R$ 0,00';
+      if (fsKpiVencido) fsKpiVencido.textContent = document.getElementById('kpi-vencido')?.textContent || 'R$ 0,00';
+      if (fsKpiLucro) fsKpiLucro.textContent = document.getElementById('kpi-lucro')?.textContent || 'R$ 0,00';
+      if (fsKpiClientesAtraso) fsKpiClientesAtraso.textContent = document.getElementById('kpi-clientes-atraso')?.textContent || '0';
+    }
+
     async function carregarDashboardCompleto() {
       if (!msgDashboardCompleto) return;
 
@@ -2048,6 +2310,8 @@
 
         const dashboardCompleto = await fetchJson(`${API}/dashboard/completo`);
         preencherDashboardCompleto(dashboardCompleto);
+        renderizarGraficosDashboardCompleto(dashboardCompleto);
+        preencherResumoFullscreen();
         msgDashboardCompleto.textContent = 'Dashboard completo atualizado com sucesso.';
       } catch (err) {
         msgDashboardCompleto.textContent = err.error || 'Falha ao carregar dashboard completo.';
@@ -2506,6 +2770,9 @@
       if (event.key === 'Escape' && !dialogSalvarCliente.classList.contains('hidden')) {
         closeSalvarClienteDialog();
       }
+      if (event.key === 'Escape' && dialogDashboardCompleto && !dialogDashboardCompleto.classList.contains('hidden')) {
+        fecharDashboardFullscreen();
+      }
     });
 
     buscaInvestimentosInput.addEventListener('input', (event) => {
@@ -2513,9 +2780,24 @@
       aplicarBuscaInvestimentos();
     });
 
-    btnCarregarDashboardCompleto.addEventListener('click', () => {
-      carregarDashboardCompleto();
+    btnCarregarDashboardCompleto.addEventListener('click', async () => {
+      await carregarDashboardCompleto();
+      abrirDashboardFullscreen();
     });
+
+    if (btnFecharDashboardFullscreen) {
+      btnFecharDashboardFullscreen.addEventListener('click', () => {
+        fecharDashboardFullscreen();
+      });
+    }
+
+    if (dialogDashboardCompleto) {
+      dialogDashboardCompleto.addEventListener('click', (event) => {
+        if (event.target === dialogDashboardCompleto) {
+          fecharDashboardFullscreen();
+        }
+      });
+    }
 
     btnVoltarListaInvestimentos.addEventListener('click', () => {
       abrirTab('investimentos');
